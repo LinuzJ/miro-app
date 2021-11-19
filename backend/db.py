@@ -12,7 +12,7 @@ def db_connect():
 
     def add_event(event_type, board_id, user, data):
         cur = conn.execute('insert into events (eventType, boardId,' +
-                           'userId, data) values (?, ?, ?, ?, ?);',
+                           'userId, data) values (?, ?, ?, ?);',
                            (event_type, board_id, user, data))
         conn.commit()
 
