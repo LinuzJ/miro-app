@@ -75,6 +75,7 @@ def add():
         data = request.form.get('data', None)
 
         if user and event_id and event_type and board_id:
+            
             add_event(event_id, event_type, board_id, user, data)
             return 'ok'
         else:
