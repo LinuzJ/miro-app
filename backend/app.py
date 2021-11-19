@@ -46,7 +46,14 @@ def update_users():
         board = data_in['data']['boardId']
         users = data_in['data']['users']
         if board and users:
-            update_users(board, users)
+            # Get data on who logged in/out. In format (user, isLogin)
+            changed_users = update_users(board, users)
+            if changed_users[1]:
+                isLogin = "LOGIN"
+            else:
+                isLogin = "LOGOUT"
+
+            add_event(isLogin, )
             return "OK"
         else:
             return 'Wrong data.'
