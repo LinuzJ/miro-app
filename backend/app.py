@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from db import db_connect
 import json
@@ -63,4 +64,4 @@ def add():
 if __name__ == '__main__':
     with app.app_context():
         db_connect()['setup']()
-    app.run(port=5000, host="0.0.0.0", debug=True)
+    app.run(port=int(os.environ.get('FLASK_PORT', 80)), host="0.0.0.0", debug=True)
