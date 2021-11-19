@@ -71,15 +71,14 @@ def add():
         data = request.get_json(force=True)
         print(data)
         add_event = db_actions['add']
-        event_id = data['id']
         event_type = data['type']
         board_id = data['board']
         user = data['user']
         data = data.get('data', None)
 
-        if user and event_id and event_type and board_id:
+        if user and event_type and board_id:
             
-            add_event(event_id, event_type, board_id, user, data)
+            add_event(event_type, board_id, user, data)
             return 'ok'
         else:
             return 'Wrong data.\nRequired: user, event'
@@ -87,7 +86,6 @@ def add():
         return jsonify({
             'message': 'Post a new event',
             'fields': [
-                {'name': 'id', 'type': 'string'},
                 {'name': 'type', 'type': 'string'},
                 {'name': 'board', 'type': 'string'},
                 {'name': 'user', 'type': 'string'},
