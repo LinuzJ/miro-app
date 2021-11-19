@@ -1,36 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/mirotone@2.0.0/dist/styles.css"
-    />
-    <link rel="stylesheet" href="/src/assets/style.css" />
-    <script src="https://miro.com/app/static/sdk/v2/miro.js"></script>
-  </head>
-  <body>
-    <div class="grid container">
-      <div class="cs1 ce12">
-        <img src="/src/assets/welcome.png" />
-      </div>
-      <div class="cs1 ce12">
-        <h1>Great! your app is running locally</h1>
-        <p>
-          Now create your Developer team to get your app running in Miro
-        </p>
-      </div>
-      <div class="cs1 ce12">
-        <a
-          class="button button-primary"
-          href="https://miro-ea.readme.io/docs/create-a-developer-team"
-          target="_blank"
-        >
-          Create a Developer team
-        </a>
-      </div>
-    </div>
-    <script type="module" src="/src/index.js"></script>
-  </body>
+<head>
+    <script src="https://miro.com/app/static/sdk.1.1.js"></script>
+    <script>
+
+        function postData(endpoint, data) {
+            fetch("159.223.11.253/" + endpoint, {
+                method: "POST",
+                headers: {},
+                body: JSON.stringify(data)
+            }).then(res => {
+                console.log(res.status)
+            });
+        };
+
+        async function handleClickEvent(event) {
+            console.log("click!")
+            let board = await miro.board.info.get();
+            let user = await miro.account.get();
+            let data = {
+                type: "CLICK",
+                board: board.id,
+                user: user.id
+            };
+            postData("add_event", data);
+        };
+
+        miro.onReady(() => {
+            miro.addListener("CANVAS_CLICKED", handleClickEvent);
+        });
+
+    </script>
+</head>
 </html>
