@@ -10,10 +10,10 @@ def db_connect():
     if conn is None:
         conn = g._database = sqlite3.connect('miro_data.db')
 
-    def add_event(event_id, event_type, board_id, user, data):
-        cur = conn.execute('insert into events (eventId, eventType, boardId,' +
-                           'userId, data) values (?, ?, ?, ?, ?);',
-                           (event_id, event_type, board_id, user, data))
+    def add_event(event_type, board_id, user, data):
+        cur = conn.execute('insert into events (eventType, boardId,' +
+                           'userId, data) values (?, ?, ?, ?);',
+                           (event_type, board_id, user, data))
         conn.commit()
 
     def update_users(boardId, users):
@@ -34,6 +34,12 @@ def db_connect():
         cur.close()
         return rv
 
+    def user_events():
+        cur = conn.execute("select eventType, userId, timestamp from events where eventType='USER_JOINED' " +
+                           "or eventType='USER_LEFT' order by " +
+                           "timestamp;")
+        return cur.fetchall()
+
     def setup_table():
         cur = conn.executescript('''
 create table if not exists users(
@@ -44,7 +50,6 @@ create table if not exists users(
 );
 create table if not exists events(
     id integer primary key,
-    eventId text not null,
     eventType text not null,
     boardId text not null,
     userId text not null,
@@ -54,9 +59,13 @@ create table if not exists events(
 );
 ''')
         conn.commit()
-
-    return {'add': add_event, 'get': get_events, 'setup': setup_table, 'update_users': update_users}
-
+    return {
+        'add': add_event,
+        'get': get_events,
+        'setup': setup_table,
+        'user_events': user_events,
+        'update_users': update_users,
+    }
 
 @app.teardown_appcontext
 def close_connection(exception):
