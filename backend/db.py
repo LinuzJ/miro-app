@@ -1,4 +1,5 @@
 import sqlite3
+import json
 from flask import g, Flask
 
 app = Flask(__name__)
@@ -13,6 +14,13 @@ def db_connect():
                            'userId, data) values (?, ?, ?, ?, ?);',
                            (event_id, event_type, board_id, user, data))
         conn.commit()
+
+    def update_users(boardId, users):
+        user_ids = ','.join(map(lambda x : x['id']), users)
+        cur = conn.execute('select * from user where users.id in ({user_ids}) and users.boardId = boardId;')
+        rv = cur.fetchall()
+        cur.close()
+        return rv
 
     def get_events(event_type = None):
         if event_type:
@@ -43,10 +51,13 @@ create table if not exists events(
 );
 ''')
         conn.commit()
-    return { 'add': add_event, 'get': get_events, 'setup': setup_table }
+    
+    
+    return { 'add': add_event, 'get': get_events, 'setup': setup_table, 'update_users': update_users }
 
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
+    
