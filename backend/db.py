@@ -40,6 +40,12 @@ def db_connect():
                            "timestamp;")
         return cur.fetchall()
 
+    def user_activity():
+        cur = conn.execute(
+            "SELECT COUNT(events.userId) FROM (events INNER JOIN users ON events.userId = users.userId) GROUP BY boardId, events.userId")
+
+        return cur.fetchall()
+
     def setup_table():
         cur = conn.executescript('''
 create table if not exists users(
@@ -65,7 +71,9 @@ create table if not exists events(
         'setup': setup_table,
         'user_events': user_events,
         'update_users': update_users,
+        'activity': user_activity,
     }
+
 
 @app.teardown_appcontext
 def close_connection(exception):

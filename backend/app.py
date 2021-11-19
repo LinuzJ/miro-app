@@ -51,7 +51,7 @@ def update_users():
         if board and users:
             # Get data on who logged in/out. In format (user, isLogin)
             changed_users = update_users(board, users)
-            isLogin = "LOGIN" if changed_users[1] else "LOGOUT"
+            isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
 
             add_event(isLogin, board, changed_users[0], None)
             return "OK"
@@ -156,6 +156,14 @@ def time_stats():
         else:
             print('Incorrect joined/left event')
     return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
+
+
+@app.route('/activity')
+def activity_stats():
+    db_actions = db_connect()
+    # Get data
+    activity = db_actions['activity']()
+    return jsonify(activity)
 
 
 if __name__ == '__main__':
