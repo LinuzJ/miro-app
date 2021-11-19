@@ -1,11 +1,13 @@
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from db import db_connect
 import json
 from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
