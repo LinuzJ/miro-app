@@ -68,12 +68,14 @@ def update_users():
 def add():
     if request.method == 'POST':
         db_actions = db_connect()
+        data = request.get_json(force=True)
+        print(data)
         add_event = db_actions['add']
-        event_id = request.form['id']
-        event_type = request.form['type']
-        board_id = request.form['board']
-        user = request.form['user']
-        data = request.form.get('data', None)
+        event_id = data['id']
+        event_type = data['type']
+        board_id = data['board']
+        user = data['user']
+        data = data.get('data', None)
 
         if user and event_id and event_type and board_id:
             
