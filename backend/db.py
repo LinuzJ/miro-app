@@ -8,23 +8,40 @@ def db_connect():
     if conn is None:
         conn = g._database = sqlite3.connect('miro_data.db')
 
-    def add_event(event_type, user):
-        cur = conn.execute('insert into miro_time_tracking (event_type, user) values (?, ?);', (event_type, user))
+    def add_event(event_id, event_type, board_id, user, data):
+        cur = conn.execute('insert into events (eventId, eventType, boardId,' +
+                           'userId, data) values (?, ?, ?, ?, ?);',
+                           (event_id, event_type, board_id, user, data))
         conn.commit()
 
     def get_events(event_type = None):
         if event_type:
-            cur = conn.execute('select * from miro_time_tracking where event_type=?;', (event_type))
+            cur = conn.execute('select * from events where eventType=?;', (event_type))
         else:
-            cur = conn.execute('select * from miro_time_tracking;')
+            cur = conn.execute('select * from events;')
         rv = cur.fetchall()
         cur.close()
         return rv
 
     def setup_table():
-        cur = conn.execute('''create table if not exists miro_time_tracking(id integer primary key,
-                     event_type text not null, user text not null, timestamp
-                     datetime default (datetime('now','localtime')));''')
+        cur = conn.executescript('''
+create table if not exists users(
+    id integer primary key,
+    userId text not null,
+    userName text,
+    isOnline integer default (1)
+);
+create table if not exists events(
+    id integer primary key,
+    eventId text not null,
+    eventType text not null,
+    boardId text not null,
+    userId text not null,
+    data text,
+    timestamp datetime default (datetime('now','localtime')),
+    foreign key (userId) references users(userId)
+);
+''')
         conn.commit()
     return { 'add': add_event, 'get': get_events, 'setup': setup_table }
 

@@ -35,10 +35,13 @@ def add():
     if request.method == 'POST':
         db_actions = db_connect()
         add_event = db_actions['add']
-        event = request.form['event']
+        event_id = request.form['id']
+        event_type = request.form['type']
+        board_id = request.form['board']
         user = request.form['user']
-        if user and event:
-            add_event(event, user)
+        data = request.form.get('data', None)
+        if user and event_id and event_type and board_id:
+            add_event(event_id, event_type, board_id, user, data)
             return 'ok'
         else:
             return 'Wrong data.\nRequired: user, event'
@@ -46,8 +49,11 @@ def add():
         return jsonify({
             'message': 'Post a new event',
             'fields': [
+                { 'name': 'id', 'type': 'string' },
+                { 'name': 'type', 'type': 'string' },
+                { 'name': 'board', 'type': 'string' },
                 { 'name': 'user', 'type': 'string' },
-                { 'name': 'event', 'type': 'string' },
+                { 'name': 'data', 'type': 'string', 'optional': 'true' },
             ],
         })
     else:
