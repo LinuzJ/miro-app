@@ -49,12 +49,9 @@ def update_users():
         if board and users:
             # Get data on who logged in/out. In format (user, isLogin)
             changed_users = update_users(board, users)
-            if changed_users[1]:
-                isLogin = "LOGIN"
-            else:
-                isLogin = "LOGOUT"
+            isLogin = "LOGIN" if changed_users[1] else "LOGOUT"
 
-            add_event(isLogin, )
+            add_event(isLogin, board, changed_users[0], None)
             return "OK"
         else:
             return 'Wrong data.'
@@ -84,7 +81,7 @@ def add():
         data = data.get('data', None)
 
         if user and event_type and board_id:
-            
+
             add_event(event_type, board_id, user, data)
             return 'ok'
         else:
@@ -101,6 +98,7 @@ def add():
         })
     else:
         return f'Method "{request.method}" not supported'
+
 
 @app.route('/users', methods=['POST', 'GET'])
 def users():
@@ -121,39 +119,41 @@ def users():
         return jsonify({
             'message': 'Post a new event',
             'fields': [
-                { 'name': 'id', 'type': 'string' },
-                { 'name': 'type', 'type': 'string' },
-                { 'name': 'board', 'type': 'string' },
-                { 'name': 'user', 'type': 'string' },
-                { 'name': 'data', 'type': 'string', 'optional': 'true' },
+                {'name': 'id', 'type': 'string'},
+                {'name': 'type', 'type': 'string'},
+                {'name': 'board', 'type': 'string'},
+                {'name': 'user', 'type': 'string'},
+                {'name': 'data', 'type': 'string', 'optional': 'true'},
             ],
         })
     else:
         return f'Method "{request.method}" not supported'
 
 # ----------- Advanced AI Analytics endpoints below --------------
+
+
 @app.route('/time_stats')
 def time_stats():
-        db_actions = db_connect()
-        events = db_actions['user_events']()
-        users = {}
-        for event_type, user_id, timestamp in events:
-            if user_id not in users:
-                if event_type == 'USER_JOINED':
-                    users[user_id] = { 'joined': timestamp, 'total': timedelta(0) }
-            elif 'joined' in users[user_id] and event_type == 'USER_LEFT':
-                fmt = '%Y-%m-%d %H:%M:%S'
-                interval = datetime.strptime(timestamp, fmt) - datetime.strptime(users[user_id]['joined'], fmt)
-                total = users[user_id]['total'] + interval
-                users[user_id] = { 'total': total }
-            elif 'joined' not in users[user_id] and event_type == 'USER_JOINED':
-                    users[user_id] = { 'joined': timestamp, 'total': users[user_id]['total']  }
-                    print('add joined')
-            else:
-                print('Incorrect joined/left event')
-        return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
-
-
+    db_actions = db_connect()
+    events = db_actions['user_events']()
+    users = {}
+    for event_type, user_id, timestamp in events:
+        if user_id not in users:
+            if event_type == 'USER_JOINED':
+                users[user_id] = {'joined': timestamp, 'total': timedelta(0)}
+        elif 'joined' in users[user_id] and event_type == 'USER_LEFT':
+            fmt = '%Y-%m-%d %H:%M:%S'
+            interval = datetime.strptime(
+                timestamp, fmt) - datetime.strptime(users[user_id]['joined'], fmt)
+            total = users[user_id]['total'] + interval
+            users[user_id] = {'total': total}
+        elif 'joined' not in users[user_id] and event_type == 'USER_JOINED':
+            users[user_id] = {'joined': timestamp,
+                              'total': users[user_id]['total']}
+            print('add joined')
+        else:
+            print('Incorrect joined/left event')
+    return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
 
 
 if __name__ == '__main__':
