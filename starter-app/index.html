@@ -15,7 +15,7 @@
         };
 
         async function handleClickEvent(event) {
-            console.log("click!!")
+            console.log("click!")
             let board = await miro.board.info.get();
             let user = await miro.account.get();
             let data = {
@@ -28,19 +28,19 @@
 
         miro.onReady(() => {
             miro.addListener("CANVAS_CLICKED", handleClickEvent);
-            console.log("kappa");
-        });
-        
-        miro.initialize({
-            extensionPoints: {
-                bottomBar: {
-                    title: "Analytics Toolkit",
-                    svgIcon: "https://upload.wikimedia.org/wikipedia/commons/7/73/Flat_tick_icon.svg",
-                    onClick: () => {
-                        console.log("lol");
-                    }
-                }
-            }
+            console.log("kappa2");
+            
+            miro.initialize({
+                extensionPoints: {
+                    bottomBar: {
+                        title: 'Analytics Toolkit',
+                        svgIcon: "https://upload.wikimedia.org/wikipedia/commons/7/73/Flat_tick_icon.svg",
+                        onClick: () => {
+                            console.log("lol");
+                        },
+                    },
+                },
+            })
         });
     </script>
 </head>
