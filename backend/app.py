@@ -6,9 +6,11 @@ import json
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def api():
     return "hello"
+
 
 @app.route('/events')
 def all_events():
@@ -19,6 +21,7 @@ def all_events():
         return jsonify(events)
     else:
         return 'No events found'
+
 
 @app.route('/events/<event_type>')
 def events(event_type):
@@ -31,6 +34,35 @@ def events(event_type):
         return 'No events found'
 
 
+@app.route('/update_users', methods=['GET', 'POST'])
+def update_users():
+    if request.method == 'POST':
+        # Database connection
+        db_actions = db_connect()
+        add_event = db_actions['update_users']
+        # Get data
+        data_in = request.get_json()
+        # Extract
+        board = data_in['data']['boardId']
+        users = data_in['data']['users']
+        if board and users:
+            update_users(board, users)
+            return "OK"
+        else:
+            return 'Wrong data.'
+        return "ok"
+    elif request.method == "GET":
+        return jsonify({
+            'message': 'Update users',
+            'fields': [
+                {'name': 'boardId', 'type': 'string'},
+                {'name': 'users', 'type': 'Array'},
+            ],
+        })
+    else:
+        return f'Method "{request.method}" not supported'
+
+
 @app.route('/add_event', methods=['GET', 'POST'])
 def add():
     if request.method == 'POST':
@@ -41,6 +73,7 @@ def add():
         board_id = request.form['board']
         user = request.form['user']
         data = request.form.get('data', None)
+
         if user and event_id and event_type and board_id:
             add_event(event_id, event_type, board_id, user, data)
             return 'ok'
@@ -50,11 +83,11 @@ def add():
         return jsonify({
             'message': 'Post a new event',
             'fields': [
-                { 'name': 'id', 'type': 'string' },
-                { 'name': 'type', 'type': 'string' },
-                { 'name': 'board', 'type': 'string' },
-                { 'name': 'user', 'type': 'string' },
-                { 'name': 'data', 'type': 'string', 'optional': 'true' },
+                {'name': 'id', 'type': 'string'},
+                {'name': 'type', 'type': 'string'},
+                {'name': 'board', 'type': 'string'},
+                {'name': 'user', 'type': 'string'},
+                {'name': 'data', 'type': 'string', 'optional': 'true'},
             ],
         })
     else:
@@ -64,4 +97,5 @@ def add():
 if __name__ == '__main__':
     with app.app_context():
         db_connect()['setup']()
-    app.run(port=int(os.environ.get('FLASK_PORT', 80)), host="0.0.0.0", debug=True)
+    app.run(port=int(os.environ.get('FLASK_PORT', 80)),
+            host="0.0.0.0", debug=True)
