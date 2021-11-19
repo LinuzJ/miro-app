@@ -3,19 +3,33 @@
 <head>
     <script src="https://miro.com/app/static/sdk.1.1.js"></script>
     <script>
-    miro.onReady(() => {
-      miro.initialize({
-        extensionPoints: {
-          bottomBar: {
-            title: 'Some title',
-            svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"/>',
-            onClick: () => {
-              alert('Hi!')
-            }
-          }
-        }
-      })
-    })
+
+        function postData(endpoint, data) {
+            fetch("159.223.11.253/" + endpoint, {
+                method: "POST",
+                headers: {},
+                body: JSON.stringify(data)
+            }).then(res => {
+                console.log("Success!")
+            });
+        };
+
+        async function handleClickEvent(event) {
+            console.log("click!")
+            let board = await miro.board.info.get();
+            let user = await miro.account.get();
+            let data = {
+                type: "CLICK",
+                board: board.id,
+                user: user.id
+            };
+            postData("add_event", data);
+        };
+
+        miro.onReady(() => {
+            miro.addListener("CANVAS_CLICKED", handleClickEvent);
+        });
+
     </script>
 </head>
 </html>
