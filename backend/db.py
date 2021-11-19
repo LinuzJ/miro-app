@@ -34,6 +34,12 @@ def db_connect():
         cur.close()
         return rv
 
+    def user_events():
+        cur = conn.execute("select eventType, userId, timestamp from events where eventType='USER_JOINED' " +
+                           "or eventType='USER_LEFT' order by " +
+                           "timestamp;")
+        return cur.fetchall()
+
     def setup_table():
         cur = conn.executescript('''
 create table if not exists users(
@@ -54,9 +60,13 @@ create table if not exists events(
 );
 ''')
         conn.commit()
-
-    return {'add': add_event, 'get': get_events, 'setup': setup_table, 'update_users': update_users}
-
+    return {
+        'add': add_event,
+        'get': get_events,
+        'setup': setup_table,
+        'user_events': user_events,
+        'update_users': update_users,
+    }
 
 @app.teardown_appcontext
 def close_connection(exception):
