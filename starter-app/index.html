@@ -31,6 +31,23 @@
         </a>
       </div>
     </div>
-    <script type="module" src="/src/index.js"></script>
+   <!-- <script type="module" src="/src/index.js"></script> -->
+    <scrip> miro.onReady(() => {
+         const icon24 = 'https://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg'
+
+          miro.initialize({
+            extensionPoints: {
+              bottomBar: {
+                title: 'Demo app button',
+                svgIcon: icon24,
+                onClick: () => {
+                  alert('Bottom bar item has been clicked')
+                }
+              },
+            }
+          })
+        })
+      </script>
   </body>
+  
 </html>
