@@ -58,7 +58,7 @@ def db_connect():
 
         for user in set_online:
             cur = conn.execute(
-                'update users set isOnline = 1 where users.userId =? and users.board=(?);', (
+                'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
 
@@ -67,11 +67,12 @@ def db_connect():
             return (user, True, True)
         for user in set_offline:
             cur = conn.execute(
-                'update users set isOnline = 0 where users.userId =? and users.board=(?);', (
+                'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
             conn.commit()
             return (user, False, True)
+            
         return ('-1', False, False)
 
     def get_events(event_type=None):
