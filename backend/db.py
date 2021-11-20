@@ -279,7 +279,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'del_manager': del_manager,
         'get_managers': get_managers,
         'stats_prod': stats_productivity,
-        'get_username': get_username
+        'get_username': get_username,
+        'select_insight': selection_insight,
     }
 
 
