@@ -83,7 +83,7 @@ async function handleSelectionUpdatedEvent(event) {
     postData("add_event", data);
 };
 
-function initialize() {
+async function initialize() {
     // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
