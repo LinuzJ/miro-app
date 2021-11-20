@@ -52,17 +52,18 @@ def db_connect():
 
         # OFFLINE users in rv should be online
         # list of IDs
-        set_online = ','.join(
-            [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
-        set_offline = ','.join(
-            [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
+        # set_online = ','.join(
+        #     [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
+        # set_offline = ','.join(
+        #     [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
+        set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
+        set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 
         for user in set_online:
             cur = conn.execute(
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
-
             # should be only one user updated, so return this user
             conn.commit()
             return (user, True, True)

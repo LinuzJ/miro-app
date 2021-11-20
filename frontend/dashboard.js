@@ -13,9 +13,8 @@ function openTab(selected) {
   });
 }
 
-async function getActivity() {
-  const boardId = 'o9J_lhl9hPw=';
-  const resp = await fetch('https://hittatilltf.com/stats/productivity');
+async function getActivity(boardId) {
+  const resp = await fetch(`https://hittatilltf.com/stats/productivity/${boardId}`);
   productivityData = await resp.json();
   const list = document.querySelector('.productivity-list');
   Object.entries(productivityData[boardId]).forEach(([user, productivityScore]) => {
@@ -25,7 +24,6 @@ async function getActivity() {
   });
 
 }
-getActivity();
 
 async function getInsights() {
   try {
@@ -42,36 +40,21 @@ async function getInsights() {
   }
 };
 
-getInsights();
 
 function setInfo() {
   if (board) {
     const p = document.querySelector('.board-info');
-    p.appendChild(document.createTextNode(`Board: ${board.id}\nCreated at: ${baoprd.createdAt}\nLast modified: ${board.updatedAt}\nOwner: ${board.owner.name}`));
+    p.appendChild(document.createTextNode(`Board: ${board.id}\nCreated at: ${board.createdAt}\nLast modified: ${board.updatedAt}\nOwner: ${board.owner.name}`));
   } else {
     setTimeout(setInfo, 100000);
   }
 }
 
-setInfo();
-
-async function requestAuthorization() {
-    let isAuthorized = await miro.isAuthorized()
-    while (!isAuthorized) {
-        try {
-            await  miro.requestAuthorization();
-        } catch (e) {
-            await new Promise(r => setTimeout(r, 200));
-        }
-        isAuthorized = await miro.isAuthorized()
-    }
-}
-
 miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
-    await requestAuthorization();
-    initialize();
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
+    getInsights();
     setInfo();
+    getActivity(board.id);
 });
