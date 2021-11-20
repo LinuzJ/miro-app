@@ -43,6 +43,7 @@ def update():
         # Database connection
         db_actions = db_connect()
         update_users = db_actions['update_users']
+        add_event = db_actions['add']
         # Get data
         data_in = request.get_json()
         print('-----------------------')
