@@ -46,7 +46,7 @@ def update_users():
         # Get data
         data_in = request.get_json()
         # Extract
-        board = data_in['data']['boardId']
+        board = data_in['data']['board']
         users = data_in['data']['users']
         if board and users:
             # Get data on who logged in/out. In format (user, isLogin)
@@ -75,7 +75,6 @@ def add():
     if request.method == 'POST':
         db_actions = db_connect()
         data = request.get_json(force=True)
-        print(data)
         add_event = db_actions['add']
         event_type = data['type']
         board_id = data['board']
@@ -96,6 +95,32 @@ def add():
                 {'name': 'board', 'type': 'string'},
                 {'name': 'user', 'type': 'string'},
                 {'name': 'data', 'type': 'string', 'optional': 'true'},
+            ],
+        })
+    else:
+        return f'Method "{request.method}" not supported'
+
+
+@app.route('add_manager', methods=['GET', 'POST'])
+def manager():
+    if request.method == 'POST':
+        db_actions = db_connect()
+        data = request.get_json(force=True)
+        add_manager = db_actions['add_manager']
+        board = data['board']
+        userID = data['user']
+
+        if board and userID:
+            add_manager(board, userID)
+            return 'ok'
+        else:
+            return 'Wrong data.\nRequired: user, event'
+    elif request.method == 'GET':
+        return jsonify({
+            'message': 'Post a new manager',
+            'fields': [
+                {'name': 'board', 'type': 'string'},
+                {'name': 'user', 'type': 'string'},
             ],
         })
     else:
