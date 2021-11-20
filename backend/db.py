@@ -53,7 +53,7 @@ def db_connect():
             )
 
         # select from online users where user not in DB
-        insert_dict = {}
+        change_dict = {}
         for user in user_values_list:
             rv = conn.execute(
                 'with user(userId, userName, board) as (values (?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null or users.board <> user.board;', (
@@ -66,7 +66,7 @@ def db_connect():
                         user[0], user[1], board)
                 )
                 conn.commit()
-                insert_dict[user[0]] = 'USER_INSERTED'
+                change_dict[user[0]] = True
 
         cur = conn.execute(
             'select * from users where users.board=(?);', (board,)
@@ -76,24 +76,30 @@ def db_connect():
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 
+
         # USER JOINED
         for userId in set_online:
             cur = conn.execute(
-                'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
+                'update users set isOnline = 1 where users.userId =(?) and users.board=(?) and users.isOnline = 0;', (
                     userId, board)
             )
-        # USER LEFT
+            if cur.rowcount > 0:
+                change_dict[userId] = True
+        # USER LEFT 
         for userId in set_offline:
             cur = conn.execute(
-                'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
+                'update users set isOnline = 0 where users.userId =(?) and users.board=(?) and users.isOnline = 1;', (
                     userId, board)
             )
+            if cur.rowcount > 0:
+                change_dict[userId] = False
 
         conn.commit()
-        to_online_dict = {user: 'USER_JOINED' for user in set_online}
-        to_offline_dict = {user: 'USER_LEFT' for user in set_offline}
+        return change_dict
+        # to_online_dict = {user: 'USER_JOINED' for user in set_online}
+        # to_offline_dict = {user: 'USER_LEFT' for user in set_offline}
 
-        return ({**insert_dict, **to_online_dict, **to_offline_dict})
+        # return ({**insert_dict, **to_online_dict, **to_offline_dict})
 
     def get_events(event_type=None):
         if event_type:
@@ -161,6 +167,13 @@ def db_connect():
         )
         rec = [{"name": x[0], "id": x[1]} for x in cur.fetchall()]
         return rec
+
+    def edit_events(board):
+        cur = conn.execute('select userId, eventType, count(*) from events ' +
+                           'where board=(?) group by userId, eventType;',
+                           (board,))
+        events = cur.fetchall()
+        return events
 
     def stats_productivity(board):
         cur_j = conn.execute(
@@ -314,7 +327,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'stats_prod': stats_productivity,
         'get_username': get_username,
         'select_insight': selection_insight,
-        'get_usrs': get_users
+        'get_usrs': get_users,
+        'edit_events': edit_events,
     }
 
 

@@ -4,6 +4,7 @@ from flask_cors import CORS
 from db import db_connect
 import json
 import random
+import itertools
 from datetime import datetime, timedelta
 
 
@@ -50,33 +51,33 @@ def update():
     if request.method == 'POST':
         # Database connection
         db_actions = db_connect()
-        try:
-            update_users = db_actions['update_users']
-            add_event = db_actions['add']
-            # Get data
-            data_in = request.get_json()
-            board = data_in['board']
-            users = data_in['users']
-            if board:
-                # Get data on who logged in/out. In format (user, isLogin)
-                changed_users = update_users(board, users)
-                # if changed_users[2]:
-                #     isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
-                #     add_event(isLogin, board, changed_users[0], None)
-                #     return "OK"
-                # else:
-                #     return 'Redundant data probably'
-                print(changed_users)
+        # try:
+        update_users = db_actions['update_users']
+        add_event = db_actions['add']
+        # Get data
+        data_in = request.get_json()
+        board = data_in['board']
+        users = data_in['users']
+        if board:
+            # Get data on who logged in/out. In format (user, isLogin)
+            changed_users = update_users(board, users)
+            # if changed_users[2]:
+            #     isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
+            #     add_event(isLogin, board, changed_users[0], None)
+            #     return "OK"
+            # else:
+            #     return 'Redundant data probably'
+            print(changed_users)
 
-                for userId in changed_users.keys():
-                    # isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
-                    isLogin = changed_users[userId]
-                    add_event(isLogin, board, userId, None)
-            else:
-                return 'Wrong data.'
-            return "OK"
-        except Exception as e:
-            return f'Error is {e}'
+            for userId in changed_users.keys():
+                isLogin = "USER_JOINED" if changed_users[userId] else "USER_LEFT"
+                # isLogin = changed_users[userId]
+                add_event(isLogin, board, userId, None)
+        else:
+            return 'Wrong data.'
+        return "OK"
+        # except Exception as e:
+        #     return f'Error is {e}'
 
     elif request.method == "GET":
         return jsonify({
@@ -267,6 +268,12 @@ def activity_stats():
     activity = db_actions['activity']()
     return jsonify(activity)
 
+@app.route('/grouped_events/<board>')
+def grouped_events(board):
+    events = db_connect()['edit_events'](board)
+    usernames = db_connect()['get_username']()
+    return jsonify({usernames.get(k, 'No username'):{ev:count for u, ev, count
+                                                    in v} for k, v in itertools.groupby(events, lambda x: x[0])})
 
 @app.route('/insight/<board>')
 def insight(board):

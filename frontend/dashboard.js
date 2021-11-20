@@ -1,5 +1,6 @@
 let board = null;
 let usernames = {};
+let chart = null;
 
 function openTab(selected) {
   const tabIndices = { '.user-stats': 0, '.productivity': 1, '.misc-stats': 2 };
@@ -17,20 +18,34 @@ function openTab(selected) {
   } else {
       document.querySelector('.insight').style = 'display: none;'
   }
+  if (selected === '.user-stats') showUserChart(); 
 }
 
 async function getActivity(boardId) {
   const resp = await fetch(`https://hittatilltf.com/stats/productivity/${boardId}`);
-  productivityData = await resp.json();
+  const productivityData = await resp.json();
+  const timeResp = await fetch(`https://hittatilltf.com/time_stats/${boardId}`);
+  const timeData = await timeResp.json();
+  const eventsResp = await fetch(`https://hittatilltf.com/grouped_events/${boardId}`);
+  const eventsData = await eventsResp.json();
   const list = document.querySelector('.productivity-list');
   Object.entries(productivityData[boardId]).forEach(([user, productivityScore]) => {
     const tr = document.createElement('tr');
     const userName = document.createElement('td');
     const score = document.createElement('td');
+    const timeActive = document.createElement('td');
+    const insertions = document.createElement('td');
+    const interactions = document.createElement('td');
     userName.appendChild(document.createTextNode(user));
     score.appendChild(document.createTextNode(productivityScore.toFixed(3)));
+    timeActive.appendChild(document.createTextNode(timeData[user]));
+    insertions.appendChild(document.createTextNode(eventsData[user]?.['USER_INSERTED'] || '0'));
+    interactions.appendChild(document.createTextNode(Object.values(eventsData[user] || {}).reduce((tot, n) => tot + n, 0)));
     tr.appendChild(userName);
     tr.appendChild(score);
+    tr.appendChild(timeActive);
+    tr.appendChild(insertions);
+    tr.appendChild(interactions);
     list.appendChild(tr);
   });
 
@@ -39,13 +54,15 @@ async function getActivity(boardId) {
 async function getInsights(boardId) {
   try {
     const resp = await fetch(`https://hittatilltf.com/insight/${boardId}`);
+    console.log(resp.status);
     data = await resp.json();
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
     const insight = document.querySelector('.insight');
   } catch (e) {
-    console.log(e)
-    console.log('error')
+    console.log(boardId);
+    console.log(e);
+    console.log('error');
     const insight = document.querySelector('.insight');
     insight.style = 'display: none;';
   }
@@ -143,7 +160,11 @@ async function showUserChart() {
 
     }
   };
-  const myChart = new Chart(
+  if (chart) {
+    chart.destroy();
+    chart = null;
+  }
+  const chart = new Chart(
     document.querySelector('#userChart'),
     config
   );
