@@ -1,7 +1,8 @@
 import sqlite3
 import json
 from flask import g, Flask
-from datetime import datetime
+from datetime import datetime, time
+
 import statistics
 
 from flask.helpers import total_seconds
@@ -129,29 +130,41 @@ def db_connect():
         except Exception as e:
             return f'Error is: {e}'
 
-    def stats_productivity():
+    def stats_productivity(board):
         cur = conn.execute(
-            "SELECT userId, board, eventType, timestamp FROM events WHERE eventType='USER_JOINED' OR eventType='USER_LEFT';"
+            "SELECT userId, board, eventType, timestamp FROM events WHERE (eventType='USER_JOINED' OR eventType='USER_LEFT') AND board = (?);",
+            (board,)
         )
         join_events = cur.fetchall()
         # Set of users
         users = set(map(lambda x: x[0], join_events))
         # list if user in and out times
+        # (name, board, timestamp)
         timestamps_per_users = [[(y[0], y[1], y[3])
                                  for y in join_events if y[0] == x] for x in users]
-        # COnvert to dict {user -> (in, out)}
 
-        # user_to_time = {x[0][0]: (x[0][2], x[1][2]) for x in timestamps_per_users}
-
+        # Convert to dict {user -> (in, out)}
         board_to_usertime = {}
         for x in timestamps_per_users:
+
             b = x[0][1]  # board
             u = x[0][0]  # user
-            if b in board_to_usertime:
-                board_to_usertime[b][u] = (x[0][2], x[1][2])
+            # Check if out exists
+            if len(x) > 1:
+                if b in board_to_usertime:
+                    board_to_usertime[b][u] = (x[0][2], x[1][2])
+                else:
+                    board_to_usertime[b] = {}  # Init dict
+                    board_to_usertime[b][u] = (x[0][2], x[1][2])
             else:
-                board_to_usertime[b] = {}  # Init dict
-                board_to_usertime[b][u] = (x[0][2], x[1][2])
+                fmt = '%Y-%m-%d %H:%M:%S'
+                now = datetime.now()
+                time_now = now.strftime(fmt)
+                if b in board_to_usertime:
+                    board_to_usertime[b][u] = (x[0][2], time_now)
+                else:
+                    board_to_usertime[b] = {}  # Init dict
+                    board_to_usertime[b][u] = (x[0][2], time_now)
 
         def timedif(e, s):
             fmt = '%Y-%m-%d %H:%M:%S'
@@ -168,14 +181,17 @@ def db_connect():
                     (key, key_user, value_times[0], value_times[1])
                 )
                 out = quer.fetchall()
-                total_time = timedif(out[-1][0], out[0][0])
-                starts = out[::1]
-                ends = out[1::1]
-                deltas = [timedif(end[0], start[0])
-                          for start, end in zip(starts, ends)]
-                deltas_std = statistics.pstdev(deltas)
-                deltas_avg = (sum(deltas) / len(deltas)) / total_time
-                data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
+                if len(out) > 2:
+                    total_time = timedif(out[-1][0], out[0][0])
+                    starts = out[::1]
+                    ends = out[1::1]
+                    deltas = [timedif(end[0], start[0])
+                              for start, end in zip(starts, ends)]
+                    deltas_std = statistics.pstdev(deltas)
+                    deltas_avg = (sum(deltas) / len(deltas)) / total_time
+                    data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
+                else:
+                    data_final[key][key_user] = 0
 
         return data_final
 
