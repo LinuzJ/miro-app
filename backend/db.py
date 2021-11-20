@@ -27,10 +27,6 @@ def db_connect():
         ids_list = [x['id'] for x in users]
         user_values_list = [(x['id'], x['name'], board, 1) for x in users]
 
-        # cur = conn.executemany(
-        #     'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select * from user left join users on user.userId = users.userId where users.userId is null and user.board = users.board;', user_values_list
-        # )
-
         # select from online users where user not in DB
         # TODO refactor this shit:
         for user in user_values_list:
@@ -47,7 +43,7 @@ def db_connect():
                         user[0], user[1], board)
                 )
                 conn.commit()
-                return (user[0], True)
+                return (user[0], True, True)
 
         cur = conn.execute(
             'select * from users where users.board=?;', (board)
@@ -68,16 +64,15 @@ def db_connect():
 
             # should be only one user updated, so return this user
             conn.commit()
-            return (user[0], True)
+            return (user[0], True, True)
         for user in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =? and users.board=?;', (
                     user, board)
             )
             conn.commit()
-            return (user[0], False)
-
-        return ('not OK', False)
+            return (user[0], False, True)
+        return ('-1', False, False)
 
     def get_events(event_type=None):
         if event_type:
