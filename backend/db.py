@@ -22,6 +22,7 @@ def db_connect():
         # conn.commit()
         print('add event')
 
+    # Returns a tuple (userId, wentOnline): (text, boolean)
     def update_users(board, users):
         # TODO get who this inserts, return real values
         ids_list = [x['id'] for x in users]
@@ -45,13 +46,9 @@ def db_connect():
                 conn.execute(
                     'insert into users(userId, userName, board) values (?, ?, ?);', (user[0], user[1], board)
                 )
+                conn.commit()
                 return (user[0], True)
 
-        # cur = conn.executemany(
-        #     'insert or replace into users(userId, userName, board, isOnline) values (?, ?, ?, ?);', user_values_list
-        # )
-        
-        # select users from this board
         cur = conn.execute(
             'select * from users where users.board=?;', (board)
         )
@@ -68,14 +65,17 @@ def db_connect():
                 'update users set isOnline = 1 where users.userId =? and users.board=?;', (
                     user, board)
             )
+            conn.commit()
+            return (user[0], True)
         for user in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =? and users.board=?;', (
                     user, board)
             )
-        conn.commit()
+            conn.commit()
+            return (user[0], False)
 
-        return ('ok', False)
+        return ('not OK', False)
 
     def get_events(event_type=None):
         if event_type:
