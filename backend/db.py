@@ -245,15 +245,18 @@ def db_connect():
             if len(y) >= 3:
                 groups[key] = [(z[0], z[-1]) for z in y][0:3]
 
-        key = list(groups.keys())[0]
-        data_ = groups[key]
-        object_ = data_[0][-1]
-        names = []
-        usernames = get_username()
-        for i in data_:
-            names.append(usernames.get(i[0], 'No username'))
+        keys = list(groups.keys())
+        if keys:
+            key = list(groups.keys())[0]
+            data_ = groups[key]
+            object_ = data_[0][-1]
+            names = []
+            usernames = get_username()
+            for i in data_:
+                names.append(usernames.get(i[0], 'No username'))
 
-        return (key, object_, names)
+            return (key, object_, names)
+        return None
 
     def setup_table():
         cur = conn.executescript('''
