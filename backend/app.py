@@ -167,6 +167,16 @@ def manager_post():
         return f'Method "{request.method}" not supported'
 
 
+@app.route('/users/<board>')
+def all_users(board):
+    if request.method == 'GET':
+        db_actions = db_connect()
+        get_users = db_actions['get_usrs'](board)
+        return jsonify(get_users)
+    else:
+        return f'Method "{request.method}" not supported'
+
+
 @ app.route('/users', methods=['POST', 'GET'])
 def users():
     if request.method == 'POST':

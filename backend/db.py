@@ -82,7 +82,7 @@ def db_connect():
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
                     userId, board)
             )
-        # USER LEFT 
+        # USER LEFT
         for userId in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
@@ -154,6 +154,14 @@ def db_connect():
         except Exception as e:
             return f'Error is: {e}'
 
+    def get_users(b):
+        cur = conn.execute(
+            "SELECT users.userName, users.userId FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.board = (?)",
+            (b,)
+        )
+        rec = [{"name": x[0], "id": x[1]} for x in cur.fetchall()]
+        return rec
+
     def stats_productivity(board):
         cur = conn.execute(
             "SELECT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE (events.eventType='USER_JOINED' OR events.eventType='USER_LEFT') AND events.board = (?);",
@@ -164,9 +172,9 @@ def db_connect():
         users = set(map(lambda x: x[0], join_events))
         # list if user in and out times
         # (name, board, timestamp)
-        timestamps_per_users = [[(y[0], y[1], y[3])
+        timestamps_per_users = [[(y[0], y[1], y[3], y[2])
                                  for y in join_events if y[0] == x] for x in users]
-
+        print(timestamps_per_users)
         # Convert to dict {user -> (in, out)}
         board_to_usertime = {}
         for x in timestamps_per_users:
@@ -296,6 +304,7 @@ CREATE TABLE IF NOT EXISTS managers(
         'stats_prod': stats_productivity,
         'get_username': get_username,
         'select_insight': selection_insight,
+        'get_usrs': get_users
     }
 
 
