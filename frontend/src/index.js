@@ -102,6 +102,8 @@ async function handleSelectionUpdatedEvent(event) {
 };
 
 async function initialize() {
+
+    // Create event listeners
     miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
@@ -110,6 +112,16 @@ async function initialize() {
     miro.addListener("COMMENT_CREATED", handleCommentCreatedEvent);
     miro.addListener("SELECTION_UPDATED", handleSelectionUpdatedEvent);
 
+    // Handle first user joining
+    const board = await miro.board.info.get();
+    const users = await miro.board.getOnlineUsers();
+    const data = {
+        board: board.id,
+        users: users
+    };
+    postData("update_users", data);
+
+    // Add button for managers
     miro.initialize({
         extensionPoints: {
           bottomBar: 
