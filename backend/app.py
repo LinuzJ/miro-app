@@ -50,33 +50,33 @@ def update():
     if request.method == 'POST':
         # Database connection
         db_actions = db_connect()
-        try:
-            update_users = db_actions['update_users']
-            add_event = db_actions['add']
-            # Get data
-            data_in = request.get_json()
-            board = data_in['board']
-            users = data_in['users']
-            if board:
-                # Get data on who logged in/out. In format (user, isLogin)
-                changed_users = update_users(board, users)
-                # if changed_users[2]:
-                #     isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
-                #     add_event(isLogin, board, changed_users[0], None)
-                #     return "OK"
-                # else:
-                #     return 'Redundant data probably'
-                print(changed_users)
+        # try:
+        update_users = db_actions['update_users']
+        add_event = db_actions['add']
+        # Get data
+        data_in = request.get_json()
+        board = data_in['board']
+        users = data_in['users']
+        if board:
+            # Get data on who logged in/out. In format (user, isLogin)
+            changed_users = update_users(board, users)
+            # if changed_users[2]:
+            #     isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
+            #     add_event(isLogin, board, changed_users[0], None)
+            #     return "OK"
+            # else:
+            #     return 'Redundant data probably'
+            print(changed_users)
 
-                for userId in changed_users.keys():
-                    # isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
-                    isLogin = changed_users[userId]
-                    add_event(isLogin, board, userId, None)
-            else:
-                return 'Wrong data.'
-            return "OK"
-        except Exception as e:
-            return f'Error is {e}'
+            for userId in changed_users.keys():
+                isLogin = "USER_JOINED" if changed_users[userId] else "USER_LEFT"
+                # isLogin = changed_users[userId]
+                add_event(isLogin, board, userId, None)
+        else:
+            return 'Wrong data.'
+        return "OK"
+        # except Exception as e:
+        #     return f'Error is {e}'
 
     elif request.method == "GET":
         return jsonify({
