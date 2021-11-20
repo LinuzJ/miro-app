@@ -35,16 +35,20 @@ def events(event_type):
 
 
 @app.route('/update_users', methods=['GET', 'POST'])
-def update_users():
+def update():
     if request.method == 'POST':
         # Database connection
         db_actions = db_connect()
-        add_event = db_actions['update_users']
+        update_users = db_actions['update_users']
         # Get data
         data_in = request.get_json()
+        print('-----------------------')
+    # return 'ok'
         # Extract
-        board = data_in['data']['boardId']
-        users = data_in['data']['users']
+        # board = json.loads(data_in['data'])['board']
+        # users = json.loads(data_in['data'])['users']
+        board = data_in['board']
+        users = data_in['users']
         if board and users:
             update_users(board, users)
             return "OK"
@@ -55,7 +59,7 @@ def update_users():
         return jsonify({
             'message': 'Update users',
             'fields': [
-                {'name': 'boardId', 'type': 'string'},
+                {'name': 'board', 'type': 'string'},
                 {'name': 'users', 'type': 'Array'},
             ],
         })
