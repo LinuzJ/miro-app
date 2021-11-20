@@ -48,6 +48,8 @@
    <script>
    </script>
     <script src="https://miro.com/app/static/sdk.1.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="dashboard.js"></script>
 
 </head>
@@ -78,6 +80,9 @@
       <hr class="cs2 ce11" />
       <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
         <h3>Lots of user stats</h3>
+        <div>
+          <canvas width="400px" id="userChart"></canvas>
+        </div>
       </div>
       <div class="productivity cs1 ce12 tab-content" style="display: none;">
         <h3>Productivity stats</h3>
