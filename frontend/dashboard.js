@@ -1,4 +1,5 @@
 let board = null;
+let usernames = {};
 
 function openTab(selected) {
   const tabIndices = { '.user-stats': 0, '.productivity': 1, '.misc-stats': 2 };
@@ -73,6 +74,11 @@ function setInfo() {
   }
 }
 
+async function getUserNames() {
+  const resp = await fetch('https://hittatilltf.com/username');
+  usernames = await resp.json();
+}
+
 async function showUserChart() {
   const scan = (values, fn, initial) => values.reduce((total, n) => [...total, fn(total[total.length - 1], n)], [initial])
   const resp = await fetch('https://hittatilltf.com/events')
@@ -83,12 +89,12 @@ async function showUserChart() {
   const datapoints = scan(join_leave_events, (total, n) => {
         if (n[1] === 'USER_JOINED') {
           pointColor.push('#77cc66')
-          labels.push(`${n[3]} joined at ${n[5]}`)
-          return { x: n[5], y: total.y + 1, user: n[3] }
+          labels.push(`${usernames[n[3]] || n[3]} joined at ${n[5]}`)
+          return { x: n[5], y: total.y + 1, user: usernames[n[3]] || n[3] }
         } else {
           pointColor.push('#b80d0d')
-          labels.push(`${n[3]} left at ${n[5]}`)
-          return { x: n[5], y: total.y - 1, user: n[3] }
+          labels.push(`${usernames[n[3]] || n[3]} left at ${n[5]}`)
+          return { x: n[5], y: total.y - 1, user: usernames[n[3]] || n[3] }
         }
       }, { x: join_leave_events[0][5], y: 0 });
   const series = {}
@@ -139,6 +145,7 @@ miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
+    await getUserNames();
     getInsights();
     setInfo();
     getActivity(board.id);
