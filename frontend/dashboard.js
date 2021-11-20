@@ -59,6 +59,7 @@ async function getInsights(boardId) {
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
     const insight = document.querySelector('.insight');
+    insight.style = 'display: grid;';
   } catch (e) {
     console.log(boardId);
     console.log(e);
