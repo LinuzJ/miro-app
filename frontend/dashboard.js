@@ -164,8 +164,7 @@ async function showUserChart() {
   );
 }
 
-getInsights('o9J_lhvgO4k=');
-/* miro.onReady(async () => {
+miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
@@ -174,4 +173,4 @@ getInsights('o9J_lhvgO4k=');
     setInfo();
     getActivity(board.id);
     showUserChart();
-}); */
+});
