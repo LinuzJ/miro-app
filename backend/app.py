@@ -128,19 +128,27 @@ def manager_post():
     if request.method == 'POST':
         data = request.get_json(force=True)
         add_manager = db_actions['add_manager']
+        del_manager = db_actions['del_manager']
         board = data['board']
         userID = data['user']
+        isAdd = data['isAdd']
 
-        if board and userID:
-            add_manager(board, userID)
-            return 'ok'
+        print(type(isAdd))
+
+        if board and userID and isAdd:
+            if isAdd == "1":
+                add_manager(board, userID)
+                return 'Added'
+            else:
+                del_manager(board, userID)
+                return 'Deleted'
         else:
             return 'Wrong data.\nRequired: user, event'
     else:
         return f'Method "{request.method}" not supported'
 
 
-@app.route('/users', methods=['POST', 'GET'])
+@ app.route('/users', methods=['POST', 'GET'])
 def users():
     if request.method == 'POST':
         db_actions = db_connect()
@@ -172,7 +180,7 @@ def users():
 # ----------- Advanced AI Analytics endpoints below --------------
 
 
-@app.route('/time_stats')
+@ app.route('/time_stats')
 def time_stats():
     db_actions = db_connect()
     events = db_actions['user_events']()
@@ -196,7 +204,7 @@ def time_stats():
     return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
 
 
-@app.route('/activity')
+@ app.route('/activity')
 def activity_stats():
     db_actions = db_connect()
     # Get data

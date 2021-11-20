@@ -22,12 +22,12 @@ def db_connect():
         # FORMAT: 1,2,3
         user_ids = ','.join(map(lambda x: f"'{x['id']}'", users))
 
-
-        # Check if user exists and insert 
+        # Check if user exists and insert
         # user_values = '(' + '),('.join(map(lambda dict: ','.join(dict.values()))) + ')'
-        
+
         # FORMAT: (id, name, board, 1)
-        user_values = map(lambda x : '(' + x['id'] + ",'" + x['name'] + "'," + str(board) + ',' + '1)', users)
+        user_values = map(
+            lambda x: '(' + x['id'] + ",'" + x['name'] + "'," + str(board) + ',' + '1)', users)
         user_values = ','.join(user_values)
 
         # (id,name,board,1),(id,name,board,1)...
@@ -35,8 +35,6 @@ def db_connect():
         # cur = conn.execute(
         #     f'insert into users(userId, userName, board, isOnline) values {user_values};'
         # )
-
-
 
         # Get users that come online
         # sql = 'select * from users where users.userId in (%s) and users.board = %s and not users.isOnline;'
@@ -48,23 +46,25 @@ def db_connect():
         )
 
         rv = cur.fetchall()
-        
-        set_online = ','.join([x[0] for x in rv if x[0] in ids_list and x[3] == 0])
-        set_offline = ','.join([x[0] for x in rv if x[0] not in ids_list and x[3] == 0])
+
+        set_online = ','.join([x[0]
+                              for x in rv if x[0] in ids_list and x[3] == 0])
+        set_offline = ','.join(
+            [x[0] for x in rv if x[0] not in ids_list and x[3] == 0])
         print(set_online + ' online')
         print(set_offline + ' offline')
         # Update their values
         # set_online = ','.join(map(lambda x : f"'{x[0]}'", returnvalue)) # users to set to online
         # print(set_online)
         cur = conn.execute(
-            f'update users set isOnline = 1 where users.userId in ({set_online}) and users.board=?', (board)
+            f'update users set isOnline = 1 where users.userId in ({set_online}) and users.board=?', (
+                board)
         )
         cur = conn.execute(
-            f'update users set isOnline = 0 where users.userId not in ({set_online}) and users.board=?', (board)
+            f'update users set isOnline = 0 where users.userId not in ({set_online}) and users.board=?', (
+                board)
         )
         conn.commit()
-
-
 
         # # Get users that go offline
         # cur = conn.execute(
@@ -106,6 +106,13 @@ def db_connect():
     def add_manager(board, usr):
         conn.execute(
             'INSERT INTO managers (board, user) VALUES (?, ?);', (board, usr))
+        conn.commit()
+
+    def del_manager(board, usr):
+        conn.execute(
+            'DELETE FROM managers WHERE managers.board = ? AND managers.user = ?;',
+            (board, usr)
+        )
         conn.commit()
 
     def get_managers(board=None):
@@ -155,6 +162,7 @@ CREATE TABLE IF NOT EXISTS managers(
         'update_users': update_users,
         'activity': user_activity,
         'add_manager': add_manager,
+        'del_manager': del_manager,
         'get_managers': get_managers
     }
 
