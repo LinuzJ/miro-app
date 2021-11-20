@@ -99,7 +99,7 @@ def db_connect():
 
     def user_activity():
         cur = conn.execute(
-            "SELECT COUNT(events.userId) FROM (events INNER JOIN users ON events.userId = users.userId) GROUP BY boardId, events.userId")
+            "SELECT COUNT(events.userId) FROM (events INNER JOIN users ON events.userId = users.userId) GROUP BY events.board, events.userId")
 
         return cur.fetchall()
 
