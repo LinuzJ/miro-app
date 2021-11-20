@@ -4,19 +4,19 @@
   <link rel="stylesheet" href="https://unpkg.com/mirotone/dist/styles.css">
     <script>
         function dashboard() {
-        console.log("Fittit siisti")
+                location.assign('dashboard.html')
         }
     </script>
 
     <style>
         #dashboard {
             position: absolute;
-            left: 5%;
-            top: 10%;
-            bottom: 2%;
-            width: 44%;
-            height: 80%;
-            border-radius: 20px;
+            left: 0%;
+            top: 0%;
+            bottom: 0%;
+            width: 50%;
+            height: 100%;
+            
 
             font-style: normal;
             font-weight: 500;
@@ -24,17 +24,16 @@
             line-height: 47px;
             text-align: center;
             color: #ECECF0;
-            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            
         }
 
         #manageUsers {
             position: absolute;
-            left: 51%;
-            top: 10%;
-            bottom: 2%;
-            width: 44%;
-            height: 80%;
-            border-radius: 20px;
+            left: 50%;
+            top: 0%;
+            bottom: 0%;
+            width: 50%;
+            height: 100%;
             background-color: #ECECF0;
             border-color: #ECECF0;
 
@@ -44,7 +43,6 @@
             line-height: 47px;
             text-align: center;
             color: #ffffff;
-            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
             word-break: break-all; 
         }
 
@@ -53,7 +51,7 @@
             font-style: normal;
             font-weight: 500;
             font-weight: 500;
-            font-size: 35px;
+            font-size: 25px;
             line-height: 47px;
             text-align: center;
             color: #ffffff;
@@ -62,7 +60,7 @@
 
         #textPerm {
             color: black;
-            font-size: 30px;
+            font-size: 25px;
         }
 
     </style>
@@ -70,11 +68,11 @@
 </head>
 <body>
      <button class="button button-primary", id = "dashboard", onclick="dashboard()">
-        <img src="dashboard.png", width=40%>
+        <img src="dashboard.png", width=30%>
         <h1 class="text">Dashboard</h1>
         </button>
     <button class="button button-primary", id = "manageUsers", onclick="dashboard()">
-        <img src="managepermissions.png", width="40%">
+        <img src="managepermissions.png", width="30%">
         <h1 class="text", id="textPerm">Manage permissions</h1>
     </button>
 </body>
