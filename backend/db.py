@@ -62,6 +62,7 @@ def db_connect():
             )
         re = curr.fetchall()
         curr.close()
+        print(re)
         return re
 
     def setup_table():
@@ -84,7 +85,7 @@ create table if not exists events(
 CREATE TABLE IF NOT EXISTS managers(
     ID INTEGER PRIMARY KEY,
     board TEXT NOT NULL,
-    userId TEXT NOT NULL
+    user TEXT NOT NULL
 );
 ''')
         conn.commit()

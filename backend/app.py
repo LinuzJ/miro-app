@@ -101,8 +101,24 @@ def add():
         return f'Method "{request.method}" not supported'
 
 
-@app.route('/managers/<board>', methods=['GET', 'POST'])
-def manager(board):
+@app.route('/managers/<board>',)
+def manager_get(board):
+    # Conn to db
+    db_actions = db_connect()
+    if request.method == 'GET':
+        get_managers = db_actions['get_managers']
+        managers = get_managers(board)
+        if managers:
+            return jsonify(managers)
+        else:
+            return 'No managers found'
+
+    else:
+        return f'Method "{request.method}" not supported'
+
+
+@app.route('/managers', methods=['POST'])
+def manager_post():
     # Conn to db
     db_actions = db_connect()
     if request.method == 'POST':
@@ -116,14 +132,6 @@ def manager(board):
             return 'ok'
         else:
             return 'Wrong data.\nRequired: user, event'
-    elif request.method == 'GET':
-        get_managers = db_actions['get_managers']
-        managers = get_managers(board)
-        if managers:
-            return json.loads(managers)
-        else:
-            return 'No managers found'
-
     else:
         return f'Method "{request.method}" not supported'
 
