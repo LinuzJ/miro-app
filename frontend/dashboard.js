@@ -37,7 +37,6 @@ async function getInsights() {
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
     const insight = document.querySelector('.insight');
-    insight.style = 'display: grid;';
   } catch {
     console.log('error')
     const insight = document.querySelector('.insight');
