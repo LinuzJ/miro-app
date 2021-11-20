@@ -11,7 +11,7 @@ def db_connect():
         conn = g._database = sqlite3.connect('miro_data.db')
 
     def add_event(event_type, board_id, user, data):
-        cur = conn.execute('insert into events (eventType, boardId,' +
+        cur = conn.execute('insert into events (eventType, board,' +
                            'userId, data) values (?, ?, ?, ?);',
                            (event_type, board_id, user, data))
         conn.commit()
@@ -131,9 +131,16 @@ def db_connect():
 
     def stats_productivity():
         cur = conn.execute(
-            "SELECT userId, timestamp FROM events WHERE eventType='USER_JOINED' OR eventType='USER_LEFT' GROUP BY userId"
+            "SELECT userId, board, eventType, timestamp FROM events WHERE eventType='USER_JOINED' OR eventType='USER_LEFT';"
         )
-        return cur.fetchall()
+        join_events = cur.fetchall()
+        users = set(map(lambda x: x[0], join_events))
+        timestamps_per_users = [[(y[0], y[1], y[3])
+                                 for y in join_events if y[0] == x] for x in users]
+        user_to_time = {x[0][0]: (x[0][2], x[1][2])
+                        for x in timestamps_per_users}
+        print(user_to_time)
+        return "lol"
 
     def setup_table():
         cur = conn.executescript('''
