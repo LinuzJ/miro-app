@@ -24,9 +24,14 @@ async function getActivity(boardId) {
   productivityData = await resp.json();
   const list = document.querySelector('.productivity-list');
   Object.entries(productivityData[boardId]).forEach(([user, productivityScore]) => {
-    const li = document.createElement('li');
-    li.appendChild(document.createTextNode(`${user} --- ${productivityScore.toFixed(3)}`));
-    list.appendChild(li);
+    const tr = document.createElement('tr');
+    const user = document.createElement('td');
+    const score = document.createElement('td');
+    user.appendChild(document.createTextNode(user));
+    score.appendChild(document.createTextNode(productivityScore.toFixed(3)));
+    tr.appendChild(user);
+    tr.appendChild(score);
+    list.appendChild(tr);
   });
 
 }
