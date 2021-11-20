@@ -234,7 +234,7 @@ def time_stats(board):
             print('add joined')
         else:
             print('Incorrect joined/left event')
-    return jsonify({usernames.get(k, 'No username'): v['total'].total_seconds() for k, v in users.items()})
+    return jsonify({usernames.get(k, 'No username'): str(v['total']) for k, v in users.items()})
 
 
 @app.route('/stats/<type>/<board>')

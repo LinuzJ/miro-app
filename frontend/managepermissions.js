@@ -1,11 +1,13 @@
 async function loadUsers() {
 
+    const board = await miro.board.getInfo();
+
     const p = document.querySelector('.users');
 
-    let res = await fetch('https://hittatilltf.com/users/' + 'o9J_lhl9hPw=');
+    let res = await fetch('https://hittatilltf.com/users/' + board.id);
     const users = await res.json();
 
-    res = await fetch('https://hittatilltf.com/managers/' + 'o9J_lhl9hPw=');
+    res = await fetch('https://hittatilltf.com/managers/' + board.id);
     const managers = await res.json();
 
     for (user of users) {
@@ -19,12 +21,15 @@ async function loadUsers() {
 
         const b = document.createElement('button');
         if (managers.map(manager => manager.id).includes(user.id)) {
-          b.className = 'button button-primary';
-        } else {
           b.className = 'button button-danger';
+          b.setAttribute('onclick', "removeManager(" + user.id + ")")
+        } else {
+          b.className = 'button button-primary';
+          b.setAttribute('onclick', "addManager(" + user.id + ")")
         }
-        
-        b.appendChild(document.createTextNode('Kappa'));
+
+       
+        b.appendChild(document.createTextNode(''));
 
         row.appendChild(a);
         row.appendChild(b);
@@ -33,6 +38,51 @@ async function loadUsers() {
     }
 }
 
+async function addManager(user) {
+
+  const board = await miro.board.getInfo();
+
+  const data = {
+    board: board.id,
+    user: user
+  };
+
+  await fetch('https://hittatilltf.com/managers', {
+    method: 'POST',
+    headers: {},
+    body: JSON.stringify(data)
+  });
+
+  const p = document.querySelector('.users');
+  p.innerHTML = '';
+
+  await loadUsers();
+
+}
+
+async function removeManager(user) {
+
+  const board = await miro.board.getInfo();
+
+  const data = {
+    board: board.id,
+    user: user
+  };
+
+  await fetch('https://hittatilltf.com/managers', {
+    method: 'DELETE',
+    headers: {},
+    body: JSON.stringify(data)
+  });
+
+  const p = document.querySelector('.users');
+  p.innerHTML = '';
+
+  await loadUsers();
+
+}
+
 miro.onReady(async () => {
+  console.log('lol');
   await loadUsers();
 });
