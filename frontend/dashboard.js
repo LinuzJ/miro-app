@@ -36,9 +36,9 @@ async function getActivity(boardId) {
     const interactions = document.createElement('td');
     userName.appendChild(document.createTextNode(user));
     score.appendChild(document.createTextNode(productivityScore.toFixed(3)));
-    timeActive.appendChild(document.createTextNode(timeData[userName]));
-    insertions.appendChild(document.createTextNode(eventsData[userName]?.['USER_INSERTED'] || '0'));
-    timeActive.appendChild(document.createTextNode(Object.values(eventsData[userName] || {}).reduce((tot, n) => tot + n, 0)));
+    timeActive.appendChild(document.createTextNode(timeData[user]));
+    insertions.appendChild(document.createTextNode(eventsData[user]?.['USER_INSERTED'] || '0'));
+    timeActive.appendChild(document.createTextNode(Object.values(eventsData[user] || {}).reduce((tot, n) => tot + n, 0)));
     tr.appendChild(userName);
     tr.appendChild(score);
     tr.appendChild(timeActive);
