@@ -53,24 +53,8 @@ function setInfo() {
   }
 }
 
-setInfo();
-
-async function requestAuthorization() {
-    let isAuthorized = await miro.isAuthorized()
-    while (!isAuthorized) {
-        try {
-            await  miro.requestAuthorization();
-        } catch (e) {
-            await new Promise(r => setTimeout(r, 200));
-        }
-        isAuthorized = await miro.isAuthorized()
-    }
-}
-
 miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
-    await requestAuthorization();
-    initialize();
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
     setInfo();
