@@ -83,11 +83,8 @@ async function handleSelectionUpdatedEvent(event) {
     postData("add_event", data);
 };
 
-miro.onReady(() => {
-    
-    console.log('Keepo');
-    
-    miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
+function initialize() {
+    // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
     miro.addListener("WIDGETS_DELETED", handleWidgetsDeletedEvent);
@@ -101,9 +98,22 @@ miro.onReady(() => {
             title: 'analytics toolkit',
             svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
             onClick: () => {
-                miro.board.openModal('frontend/choise.html');
+                console.log("lol");
             },
           },
         },
-      })
+      });
+};
+
+async function requestAuthorization() {
+    let isAuthorized = await miro.isAuthorized()
+    while (!isAuthorized) {
+        await miro.requestAuthorization()
+    }
+    initialize();
+}
+
+miro.onReady(() => {
+    console.log('Snart e de ylonz');
+    await requestAuthorization();
 });
