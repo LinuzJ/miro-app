@@ -32,7 +32,7 @@ def events(event_type):
     get_events = db_actions['get']
     events = get_events(event_type)
     if events:
-        return json.loads(events)
+        return jsonify(events)
     else:
         return 'No events found'
 
