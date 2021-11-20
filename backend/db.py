@@ -102,19 +102,19 @@ def db_connect():
         )
         conn.commit()
 
-    def get_managers(board=None):
+    def get_managers(board):
         if board:
             curr = conn.execute(
-                'SELECT * FROM managers WHERE board = ?;', (board)
+                'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = ?;', (
+                    board,)
             )
         else:
             curr = conn.execute(
-                'SELECT * FROM managers;'
+                'SELECT * FROM (managers INNER JOIN users ON managers.user = users.userId);'
             )
         re = curr.fetchall()
         curr.close()
-        print(re)
-        return re
+        return [{"userId": x[0], "userName": x[1]} for x in re]
 
     def stats_productivity():
         cur = conn.execute(

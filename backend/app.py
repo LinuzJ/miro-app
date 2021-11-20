@@ -122,29 +122,32 @@ def manager_get(board):
         return f'Method "{request.method}" not supported'
 
 
-@app.route('/managers', methods=['POST'])
+@app.route('/managers', methods=['POST', 'DELETE'])
 def manager_post():
     # Conn to db
     db_actions = db_connect()
     if request.method == 'POST':
         data = request.get_json(force=True)
         add_manager = db_actions['add_manager']
+        board = data['board']
+        userID = data['user']
+
+        if board and userID:
+            add_manager(board, userID)
+            return 'Added'
+        else:
+            return 'Wrong data.\nRequired: user, board'
+    elif request.method == 'DELETE':
+        data = request.get_json(force=True)
         del_manager = db_actions['del_manager']
         board = data['board']
         userID = data['user']
-        isAdd = data['isAdd']
 
-        print(type(isAdd))
-
-        if board and userID and isAdd:
-            if isAdd == "1":
-                add_manager(board, userID)
-                return 'Added'
-            else:
-                del_manager(board, userID)
-                return 'Deleted'
+        if board and userID:
+            del_manager(board, userID)
+            return 'Deleted'
         else:
-            return 'Wrong data.\nRequired: user, event'
+            return 'Wrong data.\nRequired: user, board'
     else:
         return f'Method "{request.method}" not supported'
 
