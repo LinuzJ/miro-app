@@ -210,9 +210,12 @@ def stats(type):
     # Establish connection to db
     db_actions = db_connect()
     if type == "productivity":
-        prod = db_actions['stats_prod']()
+        try:
+            prod = db_actions['stats_prod']()
 
-        return jsonify(prod)
+            return jsonify(prod)
+        except Exception as e:
+            return f'An error occured...: {e}'
     elif type == "help":
         return jsonify({
             'message': 'These are the type of stats you can get',
