@@ -83,7 +83,7 @@ async function handleSelectionUpdatedEvent(event) {
     postData("add_event", data);
 };
 
-async function initialize() {
+function initialize() {
     // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
@@ -106,6 +106,7 @@ async function initialize() {
 };
 
 miro.onReady(() => {
+    console.log('Snart e de ylonz');
     let isAuthorized = await miro.isAuthorized()
     while (!isAuthorized) {
         await miro.requestAuthorization()
