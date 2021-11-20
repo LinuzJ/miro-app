@@ -35,9 +35,6 @@ def db_connect():
         count_online = conn.execute(
             'select sum(isOnline) from users where board =(?);', (board,)
         ).fetchall()[0][0]
-        # print(len(ids_list))
-        # print(count_online)
-        print('--------------------------------')
 
         if len(ids_list) == 1 and count_online == 1:
             # get latest event for old user
@@ -47,8 +44,6 @@ def db_connect():
             latest_timestamp = conn.execute(
                 'select timestamp from events where userId = (?) order by timestamp desc limit 1;', (old_user,)
             ).fetchall()[0][0]
-            print(old_user)
-            print(latest_timestamp)
 
             # Insert USER LEFT event into DB
             conn.execute(
@@ -101,6 +96,7 @@ def db_connect():
         conn.commit()
         to_online_dict = {user: True for user in set_online}
         to_offline_dict = {user: False for user in set_offline} 
+
         return ({**insert_dict, **to_online_dict, **to_offline_dict})
 
     def get_events(event_type=None):
@@ -122,6 +118,12 @@ def db_connect():
             "SELECT COUNT(events.userId) FROM (events INNER JOIN users ON events.userId = users.userId) GROUP BY events.board, events.userId")
 
         return cur.fetchall()
+    
+    def get_username(): 
+        cur = conn.execute(
+            'select userId, userName from users;'
+        )
+        return {x[0]:x[1] for x in cur} 
 
     def add_manager(board, usr):
         conn.execute(
@@ -256,7 +258,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'add_manager': add_manager,
         'del_manager': del_manager,
         'get_managers': get_managers,
-        'stats_prod': stats_productivity
+        'stats_prod': stats_productivity,
+        'get_username': get_username
     }
 
 

@@ -37,6 +37,13 @@ def events(event_type):
     else:
         return 'No events found'
 
+@app.route('/username')
+def username():
+    if request.method == 'GET':
+        db_actions = db_connect()
+        return jsonify(db_actions['get_username']())
+        
+
 
 @app.route('/update_users', methods=['GET', 'POST'])
 def update():
