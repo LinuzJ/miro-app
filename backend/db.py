@@ -238,7 +238,7 @@ def db_connect():
         for key, group in groupby(availible_data, lambda x: x[1]):
             y = list(group)
             if len(y) >= 3 and len(groups[key]) < 3:
-                groups[key] = [y[0], y[-1]]
+                groups[key] = [(z[0], z[-1]) for z in y]
 
         key = list(groups.keys())[0]
         data_ = groups[key]
