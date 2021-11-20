@@ -42,22 +42,26 @@ def update():
     if request.method == 'POST':
         # Database connection
         db_actions = db_connect()
-        update_users = db_actions['update_users']
-        add_event = db_actions['add']
-        # Get data
-        data_in = request.get_json()
-        board = data_in['board']
-        users = data_in['users']
-        if board and users:
-            # Get data on who logged in/out. In format (user, isLogin)
-            changed_users = update_users(board, users)
-            isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
+        try:
+            update_users = db_actions['update_users']
+            add_event = db_actions['add']
+            # Get data
+            data_in = request.get_json()
+            board = data_in['board']
+            users = data_in['users']
+            if board and users:
+                # Get data on who logged in/out. In format (user, isLogin)
+                changed_users = update_users(board, users)
+                isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
 
-            add_event(isLogin, board, changed_users[0], None)
-            return "OK"
-        else:
-            return 'Wrong data.'
-        return "ok"
+                add_event(isLogin, board, changed_users[0], None)
+                return "OK"
+            else:
+                return 'Wrong data.'
+            return "ok"
+        except Exception as e:
+            return f'Error is {e}'
+
     elif request.method == "GET":
         return jsonify({
             'message': 'Update users',
