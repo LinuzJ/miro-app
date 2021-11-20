@@ -114,7 +114,7 @@ def db_connect():
     def get_managers(board):
         if board:
             curr = conn.execute(
-                'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = ?;', (
+                'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = "?";', (
                     board,)
             )
         else:
@@ -123,6 +123,7 @@ def db_connect():
             )
         re = curr.fetchall()
         curr.close()
+        print(re)
         if len(re) > 0:
             return [{"id": x[0], "name": x[1]} for x in re]
         else:
