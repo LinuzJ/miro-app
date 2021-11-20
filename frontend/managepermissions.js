@@ -77,5 +77,6 @@ async function removeManager(user) {
 }
 
 miro.onReady(async () => {
+  console.log('lol');
   await loadUsers();
 });
