@@ -110,7 +110,7 @@ def db_connect():
         try:
             if board:
                 curr = conn.execute(
-                    'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = "?";', (
+                    'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = (?);', (
                         board,)
                 )
             else:
