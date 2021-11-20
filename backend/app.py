@@ -4,6 +4,7 @@ from flask_cors import CORS
 from db import db_connect
 import json
 import random
+import itertools
 from datetime import datetime, timedelta
 
 
@@ -267,6 +268,12 @@ def activity_stats():
     activity = db_actions['activity']()
     return jsonify(activity)
 
+@app.route('/grouped_events/<board>')
+def grouped_events(board):
+    events = db_connect()['edit_events'](board)
+    usernames = db_connect()['get_username']()
+    return jsonify({usernames.get(k, 'No username'):{ev:count for u, ev, count
+                                                    in v} for k, v in itertools.groupby(events, lambda x: x[0])})
 
 @app.route('/insight/<board>')
 def insight(board):

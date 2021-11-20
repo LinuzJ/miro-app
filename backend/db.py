@@ -162,6 +162,13 @@ def db_connect():
         rec = [{"name": x[0], "id": x[1]} for x in cur.fetchall()]
         return rec
 
+    def edit_events(board):
+        cur = conn.execute('select userId, eventType, count(*) from events ' +
+                           'where board=(?) group by userId, eventType;',
+                           (board,))
+        events = cur.fetchall()
+        return events
+
     def stats_productivity(board):
         cur = conn.execute(
             "SELECT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE (events.eventType='USER_JOINED' OR events.eventType='USER_LEFT') AND events.board = (?);",
@@ -304,7 +311,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'stats_prod': stats_productivity,
         'get_username': get_username,
         'select_insight': selection_insight,
-        'get_usrs': get_users
+        'get_usrs': get_users,
+        'edit_events': edit_events,
     }
 
 
