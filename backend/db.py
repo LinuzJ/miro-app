@@ -123,7 +123,10 @@ def db_connect():
             )
         re = curr.fetchall()
         curr.close()
-        return [{"id": x[0], "name": x[1]} for x in re]
+        if re:
+            return [{"id": x[0], "name": x[1]} for x in re]
+        else:
+            return []
 
     def stats_productivity():
         cur = conn.execute(
