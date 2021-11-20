@@ -205,6 +205,26 @@ def time_stats():
     return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
 
 
+@app.route('/stats/<type>')
+def stats(type):
+    # Establish connection to db
+    db_actions = db_connect()
+    if type == "productivity":
+        prod = db_actions['stats_prod']()
+        print(prod)
+        return 'test'
+    elif type == "help":
+        return jsonify({
+            'message': 'These are the type of stats you can get',
+            'stats':
+                [
+                    'productivity'
+                ]
+        })
+    else:
+        return f'Type "{type}" is not supported. Try GET /stats/help'
+
+
 @ app.route('/activity')
 def activity_stats():
     db_actions = db_connect()

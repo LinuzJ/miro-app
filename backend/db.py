@@ -129,6 +129,12 @@ def db_connect():
         print(re)
         return re
 
+    def stats_productivity():
+        cur = conn.execute(
+            "SELECT userId, timestamp FROM events WHERE eventType='USER_JOINED' OR eventType='USER_LEFT' GROUP BY userId"
+        )
+        return cur.fetchall()
+
     def setup_table():
         cur = conn.executescript('''
 create table if not exists users(
@@ -163,7 +169,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'activity': user_activity,
         'add_manager': add_manager,
         'del_manager': del_manager,
-        'get_managers': get_managers
+        'get_managers': get_managers,
+        'stats_prod': stats_productivity
     }
 
 
