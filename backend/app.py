@@ -291,6 +291,7 @@ def insight(board):
     # ----------- SECOND INSIGHT -----------
     try:
         new_insight = db_actions['select_insight'](board, 1)
+
         print(new_insight)
 
         # if insights:
