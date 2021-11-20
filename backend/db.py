@@ -151,8 +151,8 @@ def db_connect():
                 )
                 out = quer.fetchall()
                 total_time = (datetime.strptime(
-                    out[0], fmt) - datetime.strptime(
-                    out[-1], fmt)).total_seconds()
+                    out[0][0], fmt) - datetime.strptime(
+                    out[-1][0], fmt)).total_seconds()
                 starts = out[::1]
                 ends = out[1::1]
                 deltas = [(datetime.strptime(
