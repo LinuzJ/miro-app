@@ -27,8 +27,8 @@ def db_connect():
         ids_list = [x['id'] for x in users]
         user_values_list = [(x['id'], x['name'], board, 1) for x in users]
 
-        # Hacky shit ahead 
-        # If users online is = 1 and users id list length = 1 
+        # Hacky shit ahead
+        # If users online is = 1 and users id list length = 1
         #   set old online user offline with timestamp (latest event)
 
         count_online = conn.execute(
@@ -38,15 +38,17 @@ def db_connect():
         if len(ids_list) == 1 and count_online == 1:
             # get latest event for old user
             old_user = conn.execute(
-                'select userId from users where isOnline and board =(?);', (board,)
+                'select userId from users where isOnline and board =(?);', (
+                    board,)
             ).fetchall()[0][0]
             latest_timestamp = conn.execute(
-                'select timestamp from events where userId = (?) order by timestamp desc limit 1;', (old_user,)
+                'select timestamp from events where userId = (?) order by timestamp desc limit 1;', (
+                    old_user,)
             ).fetchall()[0][0]
 
             # Insert USER LEFT event into DB
             conn.execute(
-                'insert into events(eventType, board, userId, data, timestamp) values (?, ?, ?, ?, ?);', 
+                'insert into events(eventType, board, userId, data, timestamp) values (?, ?, ?, ?, ?);',
                 ('USER_LEFT', board, old_user, None, latest_timestamp)
             )
 
@@ -91,15 +93,11 @@ def db_connect():
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
-        
+
         conn.commit()
         to_online_dict = {user: True for user in set_online}
-<<<<<<< HEAD
         to_offline_dict = {user: False for user in set_offline}
-=======
-        to_offline_dict = {user: False for user in set_offline} 
 
->>>>>>> 32a67eada9947c95cba4d0a10f7d3daf44e68bc0
         return ({**insert_dict, **to_online_dict, **to_offline_dict})
 
     def get_events(event_type=None):
@@ -121,12 +119,12 @@ def db_connect():
             "SELECT COUNT(events.userId) FROM (events INNER JOIN users ON events.userId = users.userId) GROUP BY events.board, events.userId")
 
         return cur.fetchall()
-    
-    def get_username(): 
+
+    def get_username():
         cur = conn.execute(
             'select userId, userName from users;'
         )
-        return {x[0]:x[1] for x in cur} 
+        return {x[0]: x[1] for x in cur}
 
     def add_manager(board, usr):
         conn.execute(
@@ -281,11 +279,7 @@ CREATE TABLE IF NOT EXISTS managers(
         'del_manager': del_manager,
         'get_managers': get_managers,
         'stats_prod': stats_productivity,
-<<<<<<< HEAD
-        'select_insight': selection_insight
-=======
         'get_username': get_username
->>>>>>> 32a67eada9947c95cba4d0a10f7d3daf44e68bc0
     }
 
 
