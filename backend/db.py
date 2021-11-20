@@ -237,10 +237,18 @@ def db_connect():
         groups = {}
         for key, group in groupby(availible_data, lambda x: x[1]):
             y = list(group)
-            if len(y) >= 3:
-                groups[key] = y
+            if len(y) >= 3 and len(groups[key]) < 3:
+                groups[key] = [y[0], y[-1]]
 
-        return groups
+        key = list(groups.keys())[0]
+        data_ = groups[key]
+        object_ = data_[0][-1]
+        names = []
+        usernames = get_username()
+        for i in data_:
+            names.append(usernames[i[0]])
+
+        return (key, object_, names)
 
     def setup_table():
         cur = conn.executescript('''
