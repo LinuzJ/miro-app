@@ -243,6 +243,7 @@ def db_connect():
         groups = {}
         for key, group in groupby(availible_data, lambda x: x[1]):
             if len(list(group)) >= 3:
+                print(list(group))
                 groups[key] = list(group)
 
         return groups
