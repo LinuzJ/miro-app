@@ -56,24 +56,16 @@ async function showUserChart() {
   const events = await resp.json()
   labels = []
   join_leave_events = events.filter((event) => ['USER_JOINED', 'USER_LEFT'].includes(event[1]));
-  console.log(scan(join_leave_events, (total, n) => {
-    if (n[1] === 'USER_JOINED') {
-      labels.push(n[3])
-      return { x: n[5], y: total.y + 1 }
-    } else {
-      labels.push(n[3])
-      return { x: n[5], y: total.y - 1 }
-    }
-  }, { x: join_leave_events[0][5], y: 0 }));
   const data = {
     datasets: [{
       label: 'User online activity',
-      labels,
       data: scan(join_leave_events, (total, n) => {
         if (n[1] === 'USER_JOINED') {
-          return { x: n[5], y: total.y + 1, label: n[3] }
+          labels.push(`${n[3]} joined at ${n[5]}`)
+          return { x: n[5], y: total.y + 1 }
         } else {
-          return { x: n[5], y: total.y - 1, label: n[3] }
+          labels.push(`${n[3]} left at ${n[5]}`)
+          return { x: n[5], y: total.y - 1 }
         }
       }, { x: join_leave_events[0][5], y: 0 }),
       backgroundColor: 'rgb(255, 99, 132)',
@@ -108,7 +100,6 @@ async function showUserChart() {
     config
   );
 }
-showUserChart();
 
 miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
