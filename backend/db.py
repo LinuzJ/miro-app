@@ -16,9 +16,10 @@ def db_connect():
         conn = g._database = sqlite3.connect('miro_data.db')
 
     def add_event(event_type, board_id, user, data):
+        print(event_type, board_id, user, data)
         cur = conn.execute('insert into events (eventType, board,' +
                            'userId, data) values (?, ?, ?, ?);',
-                           (event_type, board_id, user, data))
+                           (event_type, board_id, user, json.dumps(data)))
         conn.commit()
 
     # Returns a tuple (userId, wentOnline): (text, boolean)
