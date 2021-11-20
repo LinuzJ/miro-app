@@ -156,7 +156,7 @@ def db_connect():
 
     def get_users(b):
         cur = conn.execute(
-            "SELECT users.userName, users.userId FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.board = (?)",
+            "SELECT userName, userId FROM users WHERE board = (?)",
             (b,)
         )
         rec = [{"name": x[0], "id": x[1]} for x in cur.fetchall()]
