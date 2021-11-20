@@ -14,7 +14,6 @@ function openTab(selected) {
 }
 
 async function getActivity(boardId) {
-  const boardId = 'o9J_lhl9hPw=';
   const resp = await fetch(`https://hittatilltf.com/stats/productivity/${boardId}`);
   productivityData = await resp.json();
   const list = document.querySelector('.productivity-list');
