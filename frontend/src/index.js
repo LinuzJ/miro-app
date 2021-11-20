@@ -98,7 +98,7 @@ function initialize() {
             title: 'analytics toolkit',
             svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
             onClick: () => {
-                console.log("lol");
+                miro.board.openModal('frontend/choise.html');
             },
           },
         },
@@ -109,11 +109,14 @@ async function requestAuthorization() {
     let isAuthorized = await miro.isAuthorized()
     while (!isAuthorized) {
         await miro.requestAuthorization()
+        await new Promise(r => setTimeout(r, 500));
+        isAuthorized = await miro.isAuthorized()
     }
-    initialize();
 }
 
 miro.onReady(() => {
     console.log('Snart e de ylonz!');
-    requestAuthorization();
+    requestAuthorization().then(res => {
+        initialize();
+    });
 });
