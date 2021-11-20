@@ -209,13 +209,14 @@ def time_stats():
     return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
 
 
-@app.route('/stats/<type>')
-def stats(type):
+@app.route('/stats/<type>/<board>')
+def stats(type, board):
+
     # Establish connection to db
     db_actions = db_connect()
     if type == "productivity":
         try:
-            prod = db_actions['stats_prod']()
+            prod = db_actions['stats_prod'](board)
 
             return jsonify(prod)
         except Exception as e:
