@@ -4,7 +4,6 @@ from flask import g, Flask
 from datetime import datetime, time, timedelta
 from itertools import groupby
 import statistics
-
 from flask.helpers import total_seconds
 
 

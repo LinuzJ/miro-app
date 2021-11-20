@@ -1,0 +1,36 @@
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/app.py', reloading
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/app.py', reloading
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/db.py', reloading
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://10.100.37.150:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:18:38] "[33mGET /insight/hej HTTP/1.1[0m" 404 -
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:18:44] "[33mGET /insight/ HTTP/1.1[0m" 404 -
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:18:46] "[35m[1mGET /insight HTTP/1.1[0m" 500 -
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:19:13] "[33mGET /insight/1 HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/app.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:19:24] "[33mGET /insight/ HTTP/1.1[0m" 404 -
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:19:28] "[35m[1mGET /insight/hej HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/db.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 21:19:44] "GET /insight/hej HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/db.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/db.py', reloading
+INFO:werkzeug: * Restarting with stat

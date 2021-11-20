@@ -250,11 +250,16 @@ def activity_stats():
     activity = db_actions['activity']()
     return jsonify(activity)
 
-@app.route('/insight')
-def insight():
+
+@app.route('/insight/<board>')
+def insight(board):
+    # Init ingisghts
     insights = []
     time_stats = {}
+    # Init db connection
     db_actions = db_connect()
+
+    # ----------- FIRST INSIGHT -----------
     events = db_actions['user_events']()
     users = {}
     for event_type, user_id, timestamp in events:
@@ -277,11 +282,17 @@ def insight():
     for user, time in time_stats.items():
         if time > 600:
             insights.append(jsonify(f'User {user} has spent {time} seconds on the board ' +
-                           'today, should he take a break?'))
-    if insights:
-        return random.choice(insights)
-    else:
-        return jsonify(None)
+                                    'today, should he take a break?'))
+
+    # ----------- SECOND INSIGHT -----------
+    new_insight = db_actions['select_insight'](board, 1)
+    print(new_insight)
+
+    # if insights:
+    #     return random.choice(insights)
+    # else:
+    #     return jsonify(None)
+    return jsonify(new_insight)
 
 
 if __name__ == '__main__':
