@@ -1,8 +1,8 @@
 import sqlite3
 import json
 from flask import g, Flask
-from datetime import datetime, time
-
+from datetime import datetime, time, timedelta
+from itertools import groupby
 import statistics
 
 from flask.helpers import total_seconds
@@ -78,7 +78,7 @@ def db_connect():
             # return (user, False, True)
 
         to_online_dict = {user: True for user in set_online}
-        to_offline_dict = {user: False for user in set_offline} 
+        to_offline_dict = {user: False for user in set_offline}
         return ({**insert_dict, **to_online_dict, **to_offline_dict})
         # return ('-1', False, False)
 
@@ -200,6 +200,25 @@ def db_connect():
 
         return data_final
 
+    def selection_insight(board, days_to_subtract):
+        d = datetime.today() - timedelta(days=days_to_subtract)
+        curr = conn.execute(
+            'SELECT userId, data FROM events WHERE board = (?) AND data IS NOT NULL AND timestamp > (?);',
+            (board, d)
+        )
+        fetched = curr.fetchall()
+        # Tranform into tuple with (userId, objectId, objectType)
+        availible_data = list(
+            map((lambda x: (x[0], x[1]['objectId'], x[1]['objectType']), fetched)))
+
+        # Groupby objectId and collect length and tems of each group
+        groups = {}
+        for key, group in groupby(availible_data, lambda x: x[1]):
+            if len(group) >= 3:
+                groups[key] = group
+
+        return groups
+
     def setup_table():
         cur = conn.executescript('''
 create table if not exists users(
@@ -235,7 +254,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'add_manager': add_manager,
         'del_manager': del_manager,
         'get_managers': get_managers,
-        'stats_prod': stats_productivity
+        'stats_prod': stats_productivity,
+        'select_insight': selection_insight
     }
 
 
