@@ -232,8 +232,9 @@ def db_connect():
         )
         fetched = curr.fetchall()
         # Tranform into tuple with (userId, objectId, objectType)
-        availible_data = list(
-            map((lambda x: (x[0], x[1]['objectId'], x[1]['objectType']), fetched)))
+        availible_data = []
+        for x in fetched:
+            availible_data.append((x[0], x[1]['objectId'], x[1]['objectType']))
 
         # Groupby objectId and collect length and tems of each group
         groups = {}
