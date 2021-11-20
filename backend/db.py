@@ -50,6 +50,7 @@ def db_connect():
         rv = cur.fetchall()
 
         # OFFLINE users in rv should be online
+        # list of IDs
         set_online = ','.join(
             [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         set_offline = ','.join(
@@ -63,14 +64,14 @@ def db_connect():
 
             # should be only one user updated, so return this user
             conn.commit()
-            return (user[0], True, True)
+            return (user, True, True)
         for user in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =? and users.board=(?);', (
                     user, board)
             )
             conn.commit()
-            return (user[0], False, True)
+            return (user, False, True)
         return ('-1', False, False)
 
     def get_events(event_type=None):
