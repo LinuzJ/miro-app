@@ -38,7 +38,7 @@ async function getActivity(boardId) {
 
 async function getInsights() {
   try {
-    const resp = await fetch('https://hittatilltf.com/insight');
+    const resp = await feteh(`https://hittatilltf.com/insight/${board.id}`);
     data = await resp.json();
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
