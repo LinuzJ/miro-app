@@ -25,11 +25,11 @@ async function getActivity(boardId) {
   const list = document.querySelector('.productivity-list');
   Object.entries(productivityData[boardId]).forEach(([user, productivityScore]) => {
     const tr = document.createElement('tr');
-    const user = document.createElement('td');
+    const userName = document.createElement('td');
     const score = document.createElement('td');
-    user.appendChild(document.createTextNode(user));
+    userName.appendChild(document.createTextNode(user));
     score.appendChild(document.createTextNode(productivityScore.toFixed(3)));
-    tr.appendChild(user);
+    tr.appendChild(userName);
     tr.appendChild(score);
     list.appendChild(tr);
   });
