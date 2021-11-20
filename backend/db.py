@@ -243,8 +243,8 @@ def db_connect():
         # Groupby objectId and collect length and tems of each group
         groups = {}
         for key, group in groupby(availible_data, lambda x: x[1]):
-            if len(group) >= 3:
-                groups[key] = group
+            if len(list(group)) >= 3:
+                groups[key] = list(group)
 
         return groups
 
