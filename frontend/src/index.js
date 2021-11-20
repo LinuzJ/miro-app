@@ -41,7 +41,7 @@ async function handleWidgetsCreatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "WIDGETS_CREATED",
+        type: "WIDGETS_CREATED",
         board: board.id,
         user: userId
     };
@@ -52,7 +52,7 @@ async function handleWidgetsDeletedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "WIDGETS_DELETED",
+        type: "WIDGETS_DELETED",
         board: board.id,
         user: userId
     };
@@ -63,7 +63,7 @@ async function handleWidgetsUpdatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "WIDGETS_UPDATED",
+        type: "WIDGETS_UPDATED",
         board: board.id,
         user: userId
     };
@@ -74,7 +74,7 @@ async function handleCommentCreatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "COMMENT_CREATED",
+        type: "COMMENT_CREATED",
         board: board.id,
         user: userId
     };
@@ -117,7 +117,7 @@ async function initialize() {
                 const managers = await getData("managers/" + board.id);
                 if (userId === board.owner.id || managers.map(manager => manager.id).includes(userId)) {
                     return {
-                        title: 'analytics toolkit',
+                        title: 'protrack',
                         svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
                         onClick: () => {
                             miro.board.openModal('frontend/choise.html');
@@ -142,7 +142,7 @@ async function requestAuthorization() {
 }
 
 miro.onReady(() => {
-    console.log('Snart e de ylonz!! :D');
+    console.log('Snart e de ylonz!!');
     requestAuthorization().then(res => {
         initialize();
     });
