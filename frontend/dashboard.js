@@ -60,7 +60,7 @@ function setInfo() {
       owner.appendChild(document.createTextNode(board.owner.name));
       const row = document.createElement('tr')
       const body = document.createElement('tbody');
-      row.appendChild(board);
+      row.appendChild(boardId);
       row.appendChild(created);
       row.appendChild(modified);
       row.appendChild(owner);
