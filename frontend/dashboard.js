@@ -110,7 +110,7 @@ async function showUserChart() {
 }
 showUserChart();
 
-/* miro.onReady(async () => {
+miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
@@ -118,4 +118,4 @@ showUserChart();
     setInfo();
     getActivity(board.id);
     showUserChart();
-}); */
+});
