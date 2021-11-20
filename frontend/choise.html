@@ -6,6 +6,10 @@
         function dashboard() {
                 location.assign('dashboard.html')
         }
+      
+        function manageUsers() {
+          location.assign('managepermissions.html')
+        }
     </script>
 
     <style>
@@ -71,7 +75,7 @@
         <img src="dashboard.png", width=25%>
         <h1 class="text">Dashboard</h1>
         </button>
-    <button class="button button-primary", id = "manageUsers", onclick="dashboard()">
+    <button class="button button-primary", id = "manageUsers", onclick="manageUsers()">
         <img src="managepermissions.png", width="25%">
         <h1 class="text", id="textPerm">Manage permissions</h1>
     </button>
