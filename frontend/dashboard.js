@@ -43,7 +43,8 @@ async function getInsights(boardId) {
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
     const insight = document.querySelector('.insight');
-  } catch {
+  } catch (e) {
+    console.log(e)
     console.log('error')
     const insight = document.querySelector('.insight');
     insight.style = 'display: none;';
