@@ -1,5 +1,6 @@
 let board = null;
 let usernames = {};
+let chart = null;
 
 function openTab(selected) {
   const tabIndices = { '.user-stats': 0, '.productivity': 1, '.misc-stats': 2 };
@@ -159,7 +160,11 @@ async function showUserChart() {
 
     }
   };
-  const myChart = new Chart(
+  if (chart) {
+    chart.destroy();
+    chart = null;
+  }
+  const chart = new Chart(
     document.querySelector('#userChart'),
     config
   );
