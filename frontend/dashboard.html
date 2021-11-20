@@ -48,6 +48,8 @@
    <script>
    </script>
     <script src="https://miro.com/app/static/sdk.1.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="dashboard.js"></script>
 
 </head>
@@ -64,23 +66,24 @@
         <div class="tabs">
           <div class="tabs-header-list">
             <div tabindex="0" class="tab tab-active">
-              <div class="tab-text tab-badge" onclick="openTab('.user-stats')">users stats</div>
+              <div class="tab-text tab-badge" onclick="openTab('.user-stats')">User engagement</div>
             </div>
             <div tabindex="1" class="tab">
-              <div class="tab-text tab-badge" onclick="openTab('.productivity')">productivity</div>
+              <div class="tab-text tab-badge" onclick="openTab('.productivity')">Productivity</div>
             </div>
             <div tabindex="2" class="tab">
-              <div class="tab-text tab-badge" onclick="openTab('.misc-stats')">misc</div>
+              <div class="tab-text tab-badge" onclick="openTab('.misc-stats')">Board</div>
             </div>
           </div>
         </div>
       </div>
       <hr class="cs2 ce11" />
       <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
-        <h3>Lots of user stats</h3>
+        <div>
+          <canvas width="400px" id="userChart"></canvas>
+        </div>
       </div>
       <div class="productivity cs1 ce12 tab-content" style="display: none;">
-        <h3>Productivity stats</h3>
         <ul class="productivity-list"></ul>
       </div>
       <div class="misc-stats cs1 ce12 tab-content" style="display: none;">
@@ -89,7 +92,7 @@
       </div>
     </div>
     <div class="bottom-middle">
-      <div class="grid insight">
+      <div class="grid insight" style="display: none;">
         <div class="cs1 ce2 m2" style="width: 24px; height: 24px;">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                                                                                                                 viewBox="0 0 488 488" style="enable-background:new 0 0 488 488;" xml:space="preserve">

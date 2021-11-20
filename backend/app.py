@@ -1,5 +1,4 @@
 import os
-import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import db_connect
@@ -10,8 +9,6 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
-
-logging.basicConfig(filename='logfile.log')
 
 
 @app.route('/')
@@ -40,6 +37,13 @@ def events(event_type):
     else:
         return 'No events found'
 
+@app.route('/username')
+def username():
+    if request.method == 'GET':
+        db_actions = db_connect()
+        return jsonify(db_actions['get_username']())
+        
+
 
 @app.route('/update_users', methods=['GET', 'POST'])
 def update():
@@ -51,7 +55,6 @@ def update():
             add_event = db_actions['add']
             # Get data
             data_in = request.get_json()
-            logging.info(request.data)
             board = data_in['board']
             users = data_in['users']
             if board:
@@ -63,6 +66,7 @@ def update():
                 #     return "OK"
                 # else:
                 #     return 'Redundant data probably'
+                print(changed_users)
 
                 for user in changed_users:
                     isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
