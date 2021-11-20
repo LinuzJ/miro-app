@@ -115,7 +115,7 @@ def manager_get(board):
         if managers:
             return jsonify(managers)
         else:
-            return 'No managers found'
+            return jsonify([])
 
     else:
         return f'Method "{request.method}" not supported'
