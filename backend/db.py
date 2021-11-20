@@ -49,8 +49,20 @@ def db_connect():
     def add_manager(board, usr):
         conn.execute(
             'INSERT INTO managers (board, user) VALUES (?, ?);', (board, usr))
-
         conn.commit()
+
+    def get_managers(board=None):
+        if board:
+            curr = conn.execute(
+                'SELECT * FROM managers WHERE board = ?;', (board)
+            )
+        else:
+            curr = conn.execute(
+                'SELECT * FROM managers;'
+            )
+        re = curr.fetchall()
+        curr.close()
+        return re
 
     def setup_table():
         cur = conn.executescript('''
@@ -84,6 +96,7 @@ CREATE TABLE IF NOT EXISTS managers(
         'update_users': update_users,
         'activity': user_activity,
         'add_manager': add_manager,
+        'get_managers': get_managers
     }
 
 
