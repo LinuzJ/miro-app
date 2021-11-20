@@ -1,7 +1,9 @@
 function postData(endpoint, data) {
     fetch("https://hittatilltf.com/" + endpoint, {
         method: "POST",
-        headers: {},
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
     }).then(res => {
         console.log(res.status)
