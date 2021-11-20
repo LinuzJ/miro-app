@@ -59,7 +59,7 @@ def db_connect():
                 'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =(?);', (
                     user[0], user[1], user[2], user[3], user[2])
             ).fetchall()
-            # Should only update one user, so return this user if we have this case
+
             if rv:
                 conn.execute(
                     'insert into users(userId, userName, board) values (?, ?, ?);', (
@@ -74,12 +74,6 @@ def db_connect():
         )
         rv = cur.fetchall()
 
-        # OFFLINE users in rv should be online
-        # list of IDs
-        # set_online = ','.join(
-        #     [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
-        # set_offline = ','.join(
-        #     [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 

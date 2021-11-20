@@ -71,10 +71,9 @@ def update():
                 for user in changed_users:
                     isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
                     add_event(isLogin, board, user, None)
-                    return "OK"
             else:
                 return 'Wrong data.'
-            return "ok"
+            return "OK"
         except Exception as e:
             return f'Error is {e}'
 
