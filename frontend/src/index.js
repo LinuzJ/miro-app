@@ -19,66 +19,66 @@ async function handleUsersChangedEvent(event) {
 
 async function handleClickEvent(event) {
     let board = await miro.board.info.get();
-    let user = await miro.account.get();
+    let userId = await miro.currentUser.getId();
     let data = {
         type: "CLICK",
         board: board.id,
-        user: user.id
+        user: userId
     };
     postData("add_event", data);
 };        
 
 async function handleWidgetsCreatedEvent(event) {
     let board = await miro.board.info.get();
-    let user = await miro.account.get();
+    let userId = await miro.currentUser.getId();
     let data = {
         eventType: "WIDGETS_CREATED",
         board: board.id,
-        user: user.id
+        user: userId
     };
     postData("add_event", data);
 };
 
 async function handleWidgetsDeletedEvent(event) {
     let board = await miro.board.info.get();
-    let user = await miro.account.get();
+    let userId = await miro.currentUser.getId();
     let data = {
         eventType: "WIDGETS_DELETED",
         board: board.id,
-        user: user.id
+        user: userId
     };
     postData("add_event", data);
 };
 
 async function handleWidgetsUpdatedEvent(event) {
     let board = await miro.board.info.get();
-    let user = await miro.account.get();
+    let userId = await miro.currentUser.getId();
     let data = {
         eventType: "WIDGETS_UPDATED",
         board: board.id,
-        user: user.id
+        user: userId
     };
     postData("add_event", data);
 };
 
 async function handleCommentCreatedEvent(event) {
     let board = await miro.board.info.get();
-    let user = await miro.account.get();
+    let userId = await miro.currentUser.getId();
     let data = {
         eventType: "COMMENT_CREATED",
         board: board.id,
-        user: user.id
+        user: userId
     };
     postData("add_event", data);
 };
 
 async function handleSelectionUpdatedEvent(event) {
     let board = await miro.board.info.get();
-    let user = await miro.account.get();
+    let userId = await miro.currentUser.getId();
     let data = {
         eventType: "SELECTION_UPDATED",
         board: board.id,
-        user: user.id
+        user: userId
     };
     postData("add_event", data);
 };
@@ -91,4 +91,16 @@ miro.onReady(() => {
     miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", handleWidgetsUpdatedEvent);
     miro.addListener("COMMENT_CREATED", handleCommentCreatedEvent);
     miro.addListener("SELECTION_UPDATED", handleSelectionUpdatedEvent);
+
+    miro.initialize({
+        extensionPoints: {
+          bottomBar: {
+            title: 'analytics toolkit',
+            svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
+            onClick: () => {
+                console.log("lol");
+            },
+          },
+        },
+      })
 });
