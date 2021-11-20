@@ -199,12 +199,15 @@ def users():
 # ----------- Advanced AI Analytics endpoints below --------------
 
 
-@ app.route('/time_stats')
-def time_stats():
+@ app.route('/time_stats/<board>')
+def time_stats(board):
     db_actions = db_connect()
     events = db_actions['user_events']()
+    usernames = db_actions['get_username']()
     users = {}
-    for event_type, user_id, timestamp in events:
+    for event_type, board_id, user_id, timestamp in events:
+        if board_id != board:
+            continue
         if user_id not in users:
             if event_type == 'USER_JOINED':
                 users[user_id] = {'joined': timestamp, 'total': timedelta(0)}
@@ -220,7 +223,7 @@ def time_stats():
             print('add joined')
         else:
             print('Incorrect joined/left event')
-    return jsonify({k: v['total'].total_seconds() for k, v in users.items()})
+    return jsonify({usernames.get(k, 'No username'): v['total'].total_seconds() for k, v in users.items()})
 
 
 @app.route('/stats/<type>/<board>')
@@ -265,8 +268,11 @@ def insight(board):
 
     # ----------- FIRST INSIGHT -----------
     events = db_actions['user_events']()
+    usernames = db_actions['get_username']()
     users = {}
-    for event_type, user_id, timestamp in events:
+    for event_type, board_id, user_id, timestamp in events:
+        if board_id != board:
+            continue
         if user_id not in users:
             if event_type == 'USER_JOINED':
                 users[user_id] = {'joined': timestamp, 'total': timedelta(0)}
@@ -279,28 +285,27 @@ def insight(board):
         elif 'joined' not in users[user_id] and event_type == 'USER_JOINED':
             users[user_id] = {'joined': timestamp,
                               'total': users[user_id]['total']}
-            print('add joined')
-        else:
-            print('Incorrect joined/left event')
     time_stats = {k: v['total'].total_seconds() for k, v in users.items()}
     for user, time in time_stats.items():
         if time > 600:
-            insights.append(jsonify(f'User {user} has spent {time} seconds on the board ' +
+            username = usernames.get(user, 'No username')
+            insights.append(jsonify(f'User {username} has spent {time} seconds on the board ' +
                                     'today, should he take a break?'))
 
     # ----------- SECOND INSIGHT -----------
-    try:
-        new_insight = db_actions['select_insight'](board, 1)
-
-        print(new_insight)
-
-        # if insights:
-        #     return random.choice(insights)
-        # else:
-        #     return jsonify(None)
-        return jsonify(new_insight)
-    except Exception as e:
-        return f'Error is: "{e}"'
+    new_insight = db_actions['select_insight'](board, 1)
+    user1, user2, user3 = new_insight[2]
+    object_type = new_insight[1].lower()
+    insights.append(
+        jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!'))
+    # return jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!')
+    if insights:
+        return random.choice(insights)
+    else:
+        return jsonify(None)
+    # return jsonify(new_insight)
+    # except Exception as e:
+    #     return f'Error is: "{e}"'
 
 
 if __name__ == '__main__':

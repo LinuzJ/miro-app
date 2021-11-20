@@ -104,7 +104,7 @@ def db_connect():
         return cur.fetchall()
 
     def user_events():
-        cur = conn.execute("select eventType, userId, timestamp from events where eventType='USER_JOINED' " +
+        cur = conn.execute("select eventType, board, userId, timestamp from events where eventType='USER_JOINED' " +
                            "or eventType='USER_LEFT' order by " +
                            "timestamp;")
         return cur.fetchall()
@@ -211,8 +211,8 @@ def db_connect():
                     ends = out[1::1]
                     deltas = [timedif(end[0], start[0])
                               for start, end in zip(starts, ends)]
-                    deltas_std = statistics.pstdev(deltas)
-                    deltas_avg = (sum(deltas) / len(deltas)) / total_time
+                    deltas_std = statistics.pstdev(deltas) * 1000
+                    deltas_avg = (sum(deltas) / len(deltas)) * 1000
                     data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
                 else:
                     data_final[key][key_user] = 0
@@ -222,7 +222,7 @@ def db_connect():
     def selection_insight(board, days_to_subtract):
         d = datetime.today() - timedelta(days=days_to_subtract)
         curr = conn.execute(
-            'SELECT userId, data FROM events WHERE board = (?) AND data <> "null" AND data IS NOT NULL AND timestamp > (?);',
+            'SELECT DISTINCT userId, data FROM events WHERE board = (?) AND data <> "null" AND data IS NOT NULL AND timestamp > (?);',
             (board, d)
         )
         fetched = curr.fetchall()
@@ -230,16 +230,20 @@ def db_connect():
         availible_data = []
         for x in fetched:
             id = json.loads(x[1])
+            if 'objectType' not in id:
+                continue
             availible_data.append(
                 (x[0], id['objectId'], id['objectType'])
             )
 
         # Groupby objectId and collect length and tems of each group
+
         groups = {}
         for key, group in groupby(availible_data, lambda x: x[1]):
             y = list(group)
-            if len(y) >= 3 and len(groups[key]) < 3:
-                groups[key] = [(z[0], z[-1]) for z in y]
+            print(key, y)
+            if len(y) >= 3:
+                groups[key] = [(z[0], z[-1]) for z in y][0:3]
 
         key = list(groups.keys())[0]
         data_ = groups[key]
@@ -247,7 +251,7 @@ def db_connect():
         names = []
         usernames = get_username()
         for i in data_:
-            names.append(usernames[i[0]])
+            names.append(usernames.get(i[0], 'No username'))
 
         return (key, object_, names)
 
