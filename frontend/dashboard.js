@@ -23,4 +23,21 @@
             });
 
           }
-getActivity()
+getActivity();
+
+async function getInsights() {
+  try {
+    const resp = await fetch('https://hittatilltf.com/insight');
+    data = await resp.json();
+    const p = document.querySelector('.insight-text');
+    p.appendChild(document.createTextNode(data));
+    const insight = document.querySelector('.insight');
+    insight.style = 'display: grid;';
+  } catch {
+    console.log('error')
+    const insight = document.querySelector('.insight');
+    insight.style = 'display: none;';
+  }
+};
+
+getInsights();
