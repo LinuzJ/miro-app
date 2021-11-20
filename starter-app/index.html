@@ -17,11 +17,11 @@
         async function handleClickEvent(event) {
             console.log("click!")
             let board = await miro.board.info.get();
-            let user = await miro.account.get();
+            let userId = await miro.currentUser.getId();
             let data = {
                 type: "CLICK",
                 board: board.id,
-                user: user.id
+                user: userId
             };
             postData("add_event", data);
         };

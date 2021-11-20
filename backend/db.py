@@ -30,9 +30,7 @@ def db_connect():
                 'select * from events where eventType=?;', (event_type))
         else:
             cur = conn.execute('select * from events;')
-        rv = cur.fetchall()
-        cur.close()
-        return rv
+        return cur.fetchall()
 
     def user_events():
         cur = conn.execute("select eventType, userId, timestamp from events where eventType='USER_JOINED' " +
