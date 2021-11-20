@@ -36,9 +36,9 @@ async function getActivity(boardId) {
 
 }
 
-async function getInsights() {
+async function getInsights(boardId) {
   try {
-    const resp = await feteh(`https://hittatilltf.com/insight/${board.id}`);
+    const resp = await feteh(`https://hittatilltf.com/insight/${boardId}`);
     data = await resp.json();
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
@@ -56,7 +56,7 @@ function setInfo() {
     try {
       const p = document.querySelector('.board-info');
       const boardId = document.createElement('td');
-      boardId.appendChild(document.createTextNode(board.id));
+      boardId.appendChild(document.createTextNode(board.title));
       const created = document.createElement('td');
       created.appendChild(document.createTextNode(board.createdAt));
       const modified = document.createElement('td');
@@ -153,7 +153,7 @@ miro.onReady(async () => {
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
     await getUserNames();
-    getInsights();
+    getInsights(board.id);
     setInfo();
     getActivity(board.id);
     showUserChart();
