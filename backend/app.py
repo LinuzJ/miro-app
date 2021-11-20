@@ -287,8 +287,9 @@ def insight(board):
     time_stats = {k: v['total'].total_seconds() for k, v in users.items()}
     for user, time in time_stats.items():
         if time > 600:
+            time = time / 60
             username = usernames.get(user, 'No username')
-            insights.append(jsonify(f'User {username} has spent {time} seconds on the board ' +
+            insights.append(jsonify(f'User {username} has spent {time} minutes on the board ' +
                                     'today, should he take a break?'))
 
     # ----------- SECOND INSIGHT -----------
@@ -297,7 +298,6 @@ def insight(board):
     object_type = new_insight[1].lower()
     insights.append(
         jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!'))
-    # return jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!')
     if insights:
         return random.choice(insights)
     else:
