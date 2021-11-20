@@ -49,8 +49,8 @@ function setInfo() {
   if (board) {
     try {
       const p = document.querySelector('.board-info');
-      const board = document.createElement('td');
-      board.appendChild(document.createTextNode(board.id));
+      const boardId = document.createElement('td');
+      boardId.appendChild(document.createTextNode(board.id));
       const created = document.createElement('td');
       created.appendChild(document.createTextNode(board.createdAt));
       const modified = document.createElement('td');
