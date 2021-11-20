@@ -134,7 +134,7 @@ def db_connect():
 
     def stats_productivity(board):
         cur = conn.execute(
-            "SELECT userId, board, eventType, timestamp FROM events WHERE (eventType='USER_JOINED' OR eventType='USER_LEFT') AND board = (?);",
+            "SELECT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE (events.eventType='USER_JOINED' OR events.eventType='USER_LEFT') AND events.board = (?);",
             (board,)
         )
         join_events = cur.fetchall()
