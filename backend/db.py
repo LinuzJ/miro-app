@@ -163,69 +163,79 @@ def db_connect():
         return rec
 
     def stats_productivity(board):
-        cur = conn.execute(
-            "SELECT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE (events.eventType='USER_JOINED' OR events.eventType='USER_LEFT') AND events.board = (?);",
+        cur_j = conn.execute(
+            "SELECT DISTINCT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.eventType='USER_JOINED' AND events.board = (?);",
             (board,)
         )
-        join_events = cur.fetchall()
+        cur_l = conn.execute(
+            "SELECT DISTINCT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.eventType='USER_LEFT' AND events.board = (?);",
+            (board,)
+        )
+        join_events = cur_j.fetchall()
+        leave_events = cur_l.fetchall()
+
         # Set of users
-        users = set(map(lambda x: x[0], join_events))
+        users_j = set(map(lambda x: x[0], join_events))
+        users_l = set(map(lambda x: x[0], leave_events))
         # list if user in and out times
         # (name, board, timestamp)
-        timestamps_per_users = [[(y[0], y[1], y[3], y[2])
-                                 for y in join_events if y[0] == x] for x in users]
-        print(timestamps_per_users)
-        # Convert to dict {user -> (in, out)}
-        board_to_usertime = {}
-        for x in timestamps_per_users:
+        timestamps_per_users_join = [[(y[0], y[1], y[2], y[3])
+                                      for y in join_events if y[0] == x] for x in users_j]
+        timestamps_per_users_leave = [[(y[0], y[1], y[2], y[3])
+                                      for y in leave_events if y[0] == x] for x in users_l]
 
-            b = x[0][1]  # board
-            u = x[0][0]  # user
-            # Check if out exists
-            if len(x) > 1:
-                if b in board_to_usertime:
-                    board_to_usertime[b][u] = (x[0][2], x[1][2])
-                else:
-                    board_to_usertime[b] = {}  # Init dict
-                    board_to_usertime[b][u] = (x[0][2], x[1][2])
-            else:
-                fmt = '%Y-%m-%d %H:%M:%S'
-                now = datetime.now()
-                time_now = now.strftime(fmt)
-                if b in board_to_usertime:
-                    board_to_usertime[b][u] = (x[0][2], time_now)
-                else:
-                    board_to_usertime[b] = {}  # Init dict
-                    board_to_usertime[b][u] = (x[0][2], time_now)
+        return timestamps_per_users_join
+        # # Convert to dict {user -> (in, out)}
+        # board_to_usertime = {}
+        # for x in timestamps_per_users:
 
-        def timedif(e, s):
-            fmt = '%Y-%m-%d %H:%M:%S'
-            return (datetime.strptime(
-                    e, fmt) - datetime.strptime(
-                    s, fmt)).total_seconds()
+        #     b = x[0][1]  # board
+        #     u = x[0][0]  # user
+        #     # Check if out exists
+        #     if len(x) > 1:
+        #         if b in board_to_usertime:
+        #             board_to_usertime[b][u] = (x[0][2], x[1][2])
+        #         else:
+        #             board_to_usertime[b] = {}  # Init dict
+        #             board_to_usertime[b][u] = (x[0][2], x[1][2])
+        #     else:
+        #         fmt = '%Y-%m-%d %H:%M:%S'
+        #         now = datetime.now()
+        #         time_now = now.strftime(fmt)
+        #         if b in board_to_usertime:
+        #             board_to_usertime[b][u] = (x[0][2], time_now)
+        #         else:
+        #             board_to_usertime[b] = {}  # Init dict
+        #             board_to_usertime[b][u] = (x[0][2], time_now)
 
-        data_final = {}
-        for key, value in board_to_usertime.items():
-            data_final[key] = {}
-            for key_user, value_times in value.items():
-                quer = conn.execute(
-                    "SELECT timestamp FROM events WHERE board = ? AND userId = ? AND timestamp >= ? AND timestamp <= ?;",
-                    (key, key_user, value_times[0], value_times[1])
-                )
-                out = quer.fetchall()
-                if len(out) > 2:
-                    total_time = timedif(out[-1][0], out[0][0])
-                    starts = out[::1]
-                    ends = out[1::1]
-                    deltas = [timedif(end[0], start[0])
-                              for start, end in zip(starts, ends)]
-                    deltas_std = statistics.pstdev(deltas) * 1000
-                    deltas_avg = (sum(deltas) / len(deltas)) * 1000
-                    data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
-                else:
-                    data_final[key][key_user] = 0
+        # def timedif(e, s):
+        #     fmt = '%Y-%m-%d %H:%M:%S'
+        #     return (datetime.strptime(
+        #             e, fmt) - datetime.strptime(
+        #             s, fmt)).total_seconds()
 
-        return data_final
+        # data_final = {}
+        # for key, value in board_to_usertime.items():
+        #     data_final[key] = {}
+        #     for key_user, value_times in value.items():
+        #         quer = conn.execute(
+        #             "SELECT timestamp FROM events WHERE board = ? AND userId = ? AND timestamp >= ? AND timestamp <= ?;",
+        #             (key, key_user, value_times[0], value_times[1])
+        #         )
+        #         out = quer.fetchall()
+        #         if len(out) > 2:
+        #             total_time = timedif(out[-1][0], out[0][0])
+        #             starts = out[::1]
+        #             ends = out[1::1]
+        #             deltas = [timedif(end[0], start[0])
+        #                       for start, end in zip(starts, ends)]
+        #             deltas_std = statistics.pstdev(deltas) * 1000
+        #             deltas_avg = (sum(deltas) / len(deltas)) * 1000
+        #             data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
+        #         else:
+        #             data_final[key][key_user] = 0
+
+        # return data_final
 
     def selection_insight(board, days_to_subtract):
         d = datetime.today() - timedelta(days=days_to_subtract)
