@@ -43,6 +43,38 @@
         path {
           fill: white;
         }
+        .styled-table {
+          border-collapse: collapse;
+          margin: 25px 0;
+          font-size: 0.9em;
+          font-family: sans-serif;
+          min-width: 400px;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+          background-color: #009879;
+          color: #ffffff;
+          text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+          padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+          border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+          background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+          border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+          font-weight: bold;
+          color: #009879;
+        }
    </style>
 
    <script>
@@ -80,7 +112,7 @@
       <hr class="cs2 ce11" />
       <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
         <div>
-          <canvas width="400px" id="userChart"></canvas>
+          <canvas width="500px" id="userChart"></canvas>
         </div>
       </div>
       <div class="productivity cs1 ce12 tab-content" style="display: none;">
@@ -88,7 +120,15 @@
       </div>
       <div class="misc-stats cs1 ce12 tab-content" style="display: none;">
         <h3>Board information</h3>
-        <p class="board-info"></p>
+        <table class="styled-table board-info">
+          <thead>
+            <tr>
+              <th>Board</th>
+              <th>Created</th>
+              <th>Modifed</th>
+              <th>Owner</th>
+            </tr>
+        </table>
       </div>
     </div>
     <div class="bottom-middle">
