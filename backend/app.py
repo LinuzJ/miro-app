@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import db_connect
@@ -8,6 +9,8 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
+
+logging.basicConfig(filename='logfile.log')
 
 
 @app.route('/')
@@ -47,6 +50,7 @@ def update():
             add_event = db_actions['add']
             # Get data
             data_in = request.get_json()
+            logging.info(request.data)
             board = data_in['board']
             users = data_in['users']
             if board and users:
