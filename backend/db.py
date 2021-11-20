@@ -234,8 +234,11 @@ def db_connect():
         # Tranform into tuple with (userId, objectId, objectType)
         availible_data = []
         for x in fetched:
+            id = json.loads(x[1])
+            print(id)
             availible_data.append(
-                (x[0], json.loads(x[1])['objectId'], json.loads(x[1])['objectType']))
+                (x[0], id['objectId'], id['objectType'])
+            )
 
         # Groupby objectId and collect length and tems of each group
         groups = {}
