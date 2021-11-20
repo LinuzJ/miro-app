@@ -57,12 +57,17 @@ def update():
             if board:
                 # Get data on who logged in/out. In format (user, isLogin)
                 changed_users = update_users(board, users)
-                if changed_users[2]:
-                    isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
-                    add_event(isLogin, board, changed_users[0], None)
+                # if changed_users[2]:
+                #     isLogin = "USER_JOINED" if changed_users[1] else "USER_LEFT"
+                #     add_event(isLogin, board, changed_users[0], None)
+                #     return "OK"
+                # else:
+                #     return 'Redundant data probably'
+
+                for user in changed_users:
+                    isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
+                    add_event(isLogin, board, user, None)
                     return "OK"
-                else:
-                    return 'Redundant data probably'
             else:
                 return 'Wrong data.'
             return "ok"

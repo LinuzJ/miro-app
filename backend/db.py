@@ -31,6 +31,7 @@ def db_connect():
 
         # select from online users where user not in DB
         # TODO refactor this shit:
+        insert_dict = {}
         for user in user_values_list:
             rv = conn.execute(
                 'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =(?);', (
@@ -43,7 +44,8 @@ def db_connect():
                         user[0], user[1], board)
                 )
                 conn.commit()
-                return (user[0], True, True)
+                insert_dict[user[0]] = True
+                # return (user[0], True, True)
 
         cur = conn.execute(
             'select * from users where users.board=(?);', (board,)
@@ -56,8 +58,6 @@ def db_connect():
         #     [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         # set_offline = ','.join(
         #     [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
-
-        print(rv)
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 
@@ -68,16 +68,19 @@ def db_connect():
             )
             # should be only one user updated, so return this user
             conn.commit()
-            return (user, True, True)
+            # return (user, True, True)
         for user in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
             conn.commit()
-            return (user, False, True)
+            # return (user, False, True)
 
-        return ('-1', False, False)
+        to_online_dict = {user: True for user in set_online}
+        to_offline_dict = {user: False for user in set_offline} 
+        return ({**insert_dict, **to_online_dict, **to_offline_dict})
+        # return ('-1', False, False)
 
     def get_events(event_type=None):
         if event_type:
