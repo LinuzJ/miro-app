@@ -46,6 +46,12 @@ def db_connect():
 
         return cur.fetchall()
 
+    def add_manager(board, usr):
+        conn.execute(
+            'INSERT INTO managers (board, user) VALUES (?, ?);', (board, usr))
+
+        conn.commit()
+
     def setup_table():
         cur = conn.executescript('''
 create table if not exists users(
@@ -63,6 +69,11 @@ create table if not exists events(
     timestamp datetime default (datetime('now','localtime')),
     foreign key (userId) references users(userId)
 );
+CREATE TABLE IF NOT EXISTS managers(
+    ID INTEGER PRIMARY KEY,
+    board TEXT NOT NULL,
+    userId TEXT NOT NULL
+);
 ''')
         conn.commit()
     return {
@@ -72,6 +83,7 @@ create table if not exists events(
         'user_events': user_events,
         'update_users': update_users,
         'activity': user_activity,
+        'add_manager': add_manager,
     }
 
 
