@@ -21,16 +21,29 @@ function openTab(selected) {
 
 async function getActivity(boardId) {
   const resp = await fetch(`https://hittatilltf.com/stats/productivity/${boardId}`);
-  productivityData = await resp.json();
+  const productivityData = await resp.json();
+  const timeResp = await fetch(`https://hittatilltf.com/time_stats/${boardId}`);
+  const timeData = await timeResp.json();
+  const eventsResp = await fetch(`https://hittatilltf.com/grouped_events/${boardId}`);
+  const eventsData = await eventsResp.json();
   const list = document.querySelector('.productivity-list');
   Object.entries(productivityData[boardId]).forEach(([user, productivityScore]) => {
     const tr = document.createElement('tr');
     const userName = document.createElement('td');
     const score = document.createElement('td');
+    const timeActive = document.createElement('td');
+    const insertions = document.createElement('td');
+    const interactions = document.createElement('td');
     userName.appendChild(document.createTextNode(user));
     score.appendChild(document.createTextNode(productivityScore.toFixed(3)));
+    timeActive.appendChild(document.createTextNode(timeData[userName]));
+    insertions.appendChild(document.createTextNode(eventsData[userName]['USER_INSERTED'] || '0'));
+    timeActive.appendChild(document.createTextNode(Object.values(eventsData[userName]).reduce((tot, n) => tot + n, 0)));
     tr.appendChild(userName);
     tr.appendChild(score);
+    tr.appendChild(timeActive);
+    tr.appendChild(insertions);
+    tr.appendChild(interactions);
     list.appendChild(tr);
   });
 
@@ -39,13 +52,15 @@ async function getActivity(boardId) {
 async function getInsights(boardId) {
   try {
     const resp = await fetch(`https://hittatilltf.com/insight/${boardId}`);
+    console.log(resp.status);
     data = await resp.json();
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
     const insight = document.querySelector('.insight');
   } catch (e) {
-    console.log(e)
-    console.log('error')
+    console.log(boardId);
+    console.log(e);
+    console.log('error');
     const insight = document.querySelector('.insight');
     insight.style = 'display: none;';
   }
@@ -149,7 +164,8 @@ async function showUserChart() {
   );
 }
 
-miro.onReady(async () => {
+getInsights('o9J_lhvgO4k=');
+/* miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
@@ -158,4 +174,4 @@ miro.onReady(async () => {
     setInfo();
     getActivity(board.id);
     showUserChart();
-});
+}); */
