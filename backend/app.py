@@ -46,11 +46,6 @@ def update():
         add_event = db_actions['add']
         # Get data
         data_in = request.get_json()
-        print('-----------------------')
-    # return 'ok'
-        # Extract
-        # board = json.loads(data_in['data'])['board']
-        # users = json.loads(data_in['data'])['users']
         board = data_in['board']
         users = data_in['users']
         if board and users:

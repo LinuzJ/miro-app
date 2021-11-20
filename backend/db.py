@@ -22,35 +22,39 @@ def db_connect():
         # conn.commit()
         print('add event')
 
+    # Returns a tuple (userId, wentOnline): (text, boolean)
     def update_users(board, users):
         # TODO get who this inserts, return real values
         ids_list = [x['id'] for x in users]
-        print(ids_list)
-        # FORMAT: 1,2,3
-        user_ids = ','.join(map(lambda x: f"'{x['id']}'", users))
-
-        # Check if user exists and insert
-        # user_values = '(' + '),('.join(map(lambda dict: ','.join(dict.values()))) + ')'
-
-        # FORMAT: (id, name, board, 1)
-
-        # (id,name,board,1),(id,name,board,1)...
-        # print(user_values)
-        # cur = conn.execute(
-        #     f'insert into users(userId, userName, board, isOnline) values {user_values};'
-        # )
         user_values_list = [(x['id'], x['name'], board, 1) for x in users]
-        print(user_values_list)
-        cur = conn.executemany(
-            'insert or replace into users(userId, userName, board, isOnline) values (?, ?, ?, ?);', user_values_list
-        )
+
+
+        # select from online users where user not in DB
+        # cur = conn.executemany(
+        #     'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select * from user left join users on user.userId = users.userId where users.userId is null and user.board = users.board;', user_values_list
+        # )
+
+        # TODO refactor this shit:
+        for user in user_values_list:
+            print(user)
+            rv = conn.execute(
+                # 'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select * from user left join users on user.userId = users.userId where users.userId is null and user.board = users.board;', (user[0], user[1], user[2], user[3])
+                'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =?;', (
+                    user[0], user[1], user[2], user[3], user[2])
+            ).fetchall()
+            if rv:
+                conn.execute(
+                    'insert into users(userId, userName, board) values (?, ?, ?);', (user[0], user[1], board)
+                )
+                conn.commit()
+                return (user[0], True)
 
         cur = conn.execute(
             'select * from users where users.board=?;', (board)
         )
-
         rv = cur.fetchall()
-        # print(rv)
+
+        # OFFLINE users in rv should be online
         set_online = ','.join(
             [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         set_offline = ','.join(
@@ -61,14 +65,17 @@ def db_connect():
                 'update users set isOnline = 1 where users.userId =? and users.board=?;', (
                     user, board)
             )
+            conn.commit()
+            return (user[0], True)
         for user in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =? and users.board=?;', (
                     user, board)
             )
-        conn.commit()
+            conn.commit()
+            return (user[0], False)
 
-        return ('ok', False)
+        return ('not OK', False)
 
     def get_events(event_type=None):
         if event_type:

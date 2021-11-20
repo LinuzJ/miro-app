@@ -83,7 +83,7 @@ async function handleSelectionUpdatedEvent(event) {
     postData("add_event", data);
 };
 
-function initialize() {
+async function initialize() {
     // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
@@ -94,13 +94,20 @@ function initialize() {
 
     miro.initialize({
         extensionPoints: {
-          bottomBar: {
-            title: 'analytics toolkit',
-            svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
-            onClick: () => {
-                miro.board.openModal('frontend/choise.html');
-            },
-          },
+          bottomBar: 
+            async () => {
+                const userId = await miro.currentUser.getId();
+                const board = await miro.board.info.get();
+                if (userId === board.owner.id) {
+                    return {
+                        title: 'analytics toolkit',
+                        svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
+                        onClick: () => {
+                            miro.board.openModal('frontend/choise.html');
+                        }
+                    };
+                }
+            }
         },
       });
 };
@@ -108,14 +115,17 @@ function initialize() {
 async function requestAuthorization() {
     let isAuthorized = await miro.isAuthorized()
     while (!isAuthorized) {
-        await miro.requestAuthorization()
-        await new Promise(r => setTimeout(r, 500));
+        try {
+            await  miro.requestAuthorization();
+        } catch (e) {
+            await new Promise(r => setTimeout(r, 200));
+        }
         isAuthorized = await miro.isAuthorized()
     }
 }
 
 miro.onReady(() => {
-    console.log('Snart e de ylonz!');
+    console.log('Snart e de ylonz!!');
     requestAuthorization().then(res => {
         initialize();
     });
