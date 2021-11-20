@@ -211,8 +211,8 @@ def stats(type):
     db_actions = db_connect()
     if type == "productivity":
         prod = db_actions['stats_prod']()
-        print(prod)
-        return 'test'
+
+        return jsonify(prod)
     elif type == "help":
         return jsonify({
             'message': 'These are the type of stats you can get',
