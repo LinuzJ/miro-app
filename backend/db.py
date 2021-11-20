@@ -227,7 +227,7 @@ def db_connect():
     def selection_insight(board, days_to_subtract):
         d = datetime.today() - timedelta(days=days_to_subtract)
         curr = conn.execute(
-            'SELECT userId, data FROM events WHERE board = (?) AND data IS NOT NULL AND timestamp > (?);',
+            'SELECT userId, data FROM events WHERE board = (?) AND data <> "null" AND data IS NOT NULL AND timestamp > (?);',
             (board, d)
         )
         fetched = curr.fetchall()
