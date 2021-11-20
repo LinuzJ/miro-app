@@ -164,7 +164,7 @@ async function showUserChart() {
     chart.destroy();
     chart = null;
   }
-  const chart = new Chart(
+  chart = new Chart(
     document.querySelector('#userChart'),
     config
   );
