@@ -16,9 +16,10 @@ def db_connect():
         conn = g._database = sqlite3.connect('miro_data.db')
 
     def add_event(event_type, board_id, user, data):
+        print(event_type, board_id, user, data)
         cur = conn.execute('insert into events (eventType, board,' +
                            'userId, data) values (?, ?, ?, ?);',
-                           (event_type, board_id, user, data))
+                           (event_type, board_id, user, json.dumps(data)))
         conn.commit()
 
     # Returns a tuple (userId, wentOnline): (text, boolean)
@@ -107,21 +108,25 @@ def db_connect():
         conn.commit()
 
     def get_managers(board):
-        if board:
-            curr = conn.execute(
-                'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = ?;', (
-                    board,)
-            )
-        else:
-            curr = conn.execute(
-                'SELECT * FROM (managers INNER JOIN users ON managers.user = users.userId);'
-            )
-        re = curr.fetchall()
-        curr.close()
-        if len(re) > 0:
-            return [{"id": x[0], "name": x[1]} for x in re]
-        else:
-            return []
+        try:
+            if board:
+                curr = conn.execute(
+                    'SELECT userId, userName FROM (managers INNER JOIN users ON managers.user = users.userId) WHERE managers.board = (?);', (
+                        board,)
+                )
+            else:
+                curr = conn.execute(
+                    'SELECT * FROM (managers INNER JOIN users ON managers.user = users.userId);'
+                )
+            re = curr.fetchall()
+            curr.close()
+            print(re)
+            if len(re) > 0:
+                return [{"id": x[0], "name": x[1]} for x in re]
+            else:
+                return []
+        except Exception as e:
+            return f'Error is: {e}'
 
     def stats_productivity():
         cur = conn.execute(

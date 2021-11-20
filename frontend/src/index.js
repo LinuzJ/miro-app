@@ -41,7 +41,7 @@ async function handleWidgetsCreatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "WIDGETS_CREATED",
+        type: "WIDGETS_CREATED",
         board: board.id,
         user: userId
     };
@@ -52,7 +52,7 @@ async function handleWidgetsDeletedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "WIDGETS_DELETED",
+        type: "WIDGETS_DELETED",
         board: board.id,
         user: userId
     };
@@ -63,7 +63,7 @@ async function handleWidgetsUpdatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "WIDGETS_UPDATED",
+        type: "WIDGETS_UPDATED",
         board: board.id,
         user: userId
     };
@@ -74,7 +74,7 @@ async function handleCommentCreatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
     let data = {
-        eventType: "COMMENT_CREATED",
+        type: "COMMENT_CREATED",
         board: board.id,
         user: userId
     };
@@ -84,16 +84,23 @@ async function handleCommentCreatedEvent(event) {
 async function handleSelectionUpdatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
-    let data = {
-        eventType: "SELECTION_UPDATED",
-        board: board.id,
-        user: userId
-    };
-    postData("add_event", data);
+
+    for (object of event.data) {
+        const data = {
+            type: "SELECTION_UPDATED",
+            board: board.id,
+            user: userId,
+            data: {
+                objectId: object.id,
+                objectType: object.type
+            }
+        };
+        postData("add_event", data);
+    }   
 };
 
 async function initialize() {
-    // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
+    miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
     miro.addListener("WIDGETS_DELETED", handleWidgetsDeletedEvent);
@@ -107,10 +114,10 @@ async function initialize() {
             async () => {
                 const userId = await miro.currentUser.getId();
                 const board = await miro.board.info.get();
-                const managers = await getData("managers/" + board.id)
+                const managers = await getData("managers/" + board.id);
                 if (userId === board.owner.id || managers.map(manager => manager.id).includes(userId)) {
                     return {
-                        title: 'analytics toolkit',
+                        title: 'protrack',
                         svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
                         onClick: () => {
                             miro.board.openModal('frontend/choise.html');
