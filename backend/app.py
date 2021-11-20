@@ -63,6 +63,7 @@ def update():
                 #     return "OK"
                 # else:
                 #     return 'Redundant data probably'
+                print(changed_users)
 
                 for user in changed_users:
                     isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"

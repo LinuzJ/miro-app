@@ -23,14 +23,40 @@ def db_connect():
                            (event_type, board_id, user, json.dumps(data)))
         conn.commit()
 
-    # Returns a tuple (userId, wentOnline): (text, boolean)
+    # Returns a dict {userId: joined_boolean}
     def update_users(board, users):
-        # TODO get who this inserts, return real values
         ids_list = [x['id'] for x in users]
         user_values_list = [(x['id'], x['name'], board, 1) for x in users]
 
+        # Hacky shit ahead 
+        # If users online is = 1 and users id list length = 1 
+        #   set old online user offline with timestamp (latest event)
+
+        count_online = conn.execute(
+            'select sum(isOnline) from users where board =(?);', (board,)
+        ).fetchall()[0][0]
+        # print(len(ids_list))
+        # print(count_online)
+        print('--------------------------------')
+
+        if len(ids_list) == 1 and count_online == 1:
+            # get latest event for old user
+            old_user = conn.execute(
+                'select userId from users where isOnline and board =(?);', (board,)
+            ).fetchall()[0][0]
+            latest_timestamp = conn.execute(
+                'select timestamp from events where userId = (?) order by timestamp desc limit 1;', (old_user,)
+            ).fetchall()[0][0]
+            print(old_user)
+            print(latest_timestamp)
+
+            # Insert USER LEFT event into DB
+            conn.execute(
+                'insert into events(eventType, board, userId, data, timestamp) values (?, ?, ?, ?, ?);', 
+                ('USER_LEFT', board, old_user, None, latest_timestamp)
+            )
+
         # select from online users where user not in DB
-        # TODO refactor this shit:
         insert_dict = {}
         for user in user_values_list:
             rv = conn.execute(
@@ -66,21 +92,16 @@ def db_connect():
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
-            # should be only one user updated, so return this user
-            conn.commit()
-            # return (user, True, True)
         for user in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
-            conn.commit()
-            # return (user, False, True)
-
+        
+        conn.commit()
         to_online_dict = {user: True for user in set_online}
         to_offline_dict = {user: False for user in set_offline} 
         return ({**insert_dict, **to_online_dict, **to_offline_dict})
-        # return ('-1', False, False)
 
     def get_events(event_type=None):
         if event_type:
