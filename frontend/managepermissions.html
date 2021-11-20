@@ -3,7 +3,6 @@
 <head>
   <link rel="stylesheet" href="https://unpkg.com/mirotone/dist/styles.css"/>
    <style>
-
         #background {
           height: 100%;
           display: flex;
@@ -48,49 +47,31 @@
    <script>
    </script>
     <script src="https://miro.com/app/static/sdk.1.1.js"></script>
-    <script src="managepermissions.js"></script>
-
+    <script src="managepermissions.js" defer></script>
 </head>
+
+
+
 <body>
   <div id = "background">
     <div class="grid">
+
       <div class="cs2 ce8">
         <h1>Manage users</h1>
       </div>
+
       <div class="cs11 ce11">
         <button class="button-icon button-icon-small icon-back-1" type="button" onclick="location.assign('choise.html')" />
       </div>
+
       <div class="cs2 ce11">
-        <div class="tabs">
-          <div class="tabs-header-list">
-            <div tabindex="0" class="tab tab-active">
-              <div class="tab-text tab-badge" onclick="openTab('.user-stats')">Current user permissions</div>
-            </div>
-            <div tabindex="1" class="tab">
-              <div class="tab-text tab-badge" onclick="openTab('.productivity')">Add user permission</div>
-            </div>
-          </div>
+        <hr class="cs2 ce11" />
+        <!-- Current user permission view-->
+        <div class="users cs1 ce12 tab-content" style="display: flex;">
         </div>
       </div>
-      <hr class="cs2 ce11" />
-      <!-- Current user permission view-->
-      <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
-        <h3>Current user permissions</h3>
-        
-        <input type="button" value="Generate Table" onclick="createTable()" />
-        <hr />
-        <div id="userDataTable"></div>
-        
-      </div>
 
-      <!-- Add user permission view-->
-      <div class="productivity cs1 ce12 tab-content" style="display: none;">
-        <h3>Add user permission</h3>
-        <ul class="productivity-list"></ul>
-      </div>
     </div>
-    
   </div>
 </body>
-
 </html>

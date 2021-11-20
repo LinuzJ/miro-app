@@ -160,6 +160,21 @@ def db_connect():
         except Exception as e:
             return f'Error is: {e}'
 
+    def get_users(b):
+        cur = conn.execute(
+            "SELECT userName, userId FROM users WHERE board = (?)",
+            (b,)
+        )
+        rec = [{"name": x[0], "id": x[1]} for x in cur.fetchall()]
+        return rec
+
+    def edit_events(board):
+        cur = conn.execute('select userId, eventType, count(*) from events ' +
+                           'where board=(?) group by userId, eventType;',
+                           (board,))
+        events = cur.fetchall()
+        return events
+
     def stats_productivity(board):
         cur = conn.execute(
             "SELECT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE (events.eventType='USER_JOINED' OR events.eventType='USER_LEFT') AND events.board = (?);",
@@ -170,9 +185,9 @@ def db_connect():
         users = set(map(lambda x: x[0], join_events))
         # list if user in and out times
         # (name, board, timestamp)
-        timestamps_per_users = [[(y[0], y[1], y[3])
+        timestamps_per_users = [[(y[0], y[1], y[3], y[2])
                                  for y in join_events if y[0] == x] for x in users]
-
+        print(timestamps_per_users)
         # Convert to dict {user -> (in, out)}
         board_to_usertime = {}
         for x in timestamps_per_users:
@@ -251,15 +266,18 @@ def db_connect():
             if len(y) >= 3:
                 groups[key] = [(z[0], z[-1]) for z in y][0:3]
 
-        key = list(groups.keys())[0]
-        data_ = groups[key]
-        object_ = data_[0][-1]
-        names = []
-        usernames = get_username()
-        for i in data_:
-            names.append(usernames.get(i[0], 'No username'))
+        keys = list(groups.keys())
+        if keys:
+            key = list(groups.keys())[0]
+            data_ = groups[key]
+            object_ = data_[0][-1]
+            names = []
+            usernames = get_username()
+            for i in data_:
+                names.append(usernames.get(i[0], 'No username'))
 
-        return (key, object_, names)
+            return (key, object_, names)
+        return None
 
     def setup_table():
         cur = conn.executescript('''
@@ -299,6 +317,8 @@ CREATE TABLE IF NOT EXISTS managers(
         'stats_prod': stats_productivity,
         'get_username': get_username,
         'select_insight': selection_insight,
+        'get_usrs': get_users,
+        'edit_events': edit_events,
     }
 
 

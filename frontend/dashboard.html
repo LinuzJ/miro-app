@@ -97,20 +97,20 @@
       <div class="cs2 ce11">
         <div class="tabs">
           <div class="tabs-header-list">
-            <div tabindex="0" class="tab tab-active">
+            <div tabindex="2" class="tab tab-active">
+              <div class="tab-text tab-badge" onclick="openTab('.misc-stats')">Board</div>
+            </div>
+            <div tabindex="0" class="tab">
               <div class="tab-text tab-badge" onclick="openTab('.user-stats')">User engagement</div>
             </div>
             <div tabindex="1" class="tab">
               <div class="tab-text tab-badge" onclick="openTab('.productivity')">Productivity</div>
             </div>
-            <div tabindex="2" class="tab">
-              <div class="tab-text tab-badge" onclick="openTab('.misc-stats')">Board</div>
-            </div>
           </div>
         </div>
       </div>
       <hr class="cs2 ce11" />
-      <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
+      <div class="user-stats cs1 ce12 tab-content" style="display: none;">
         <div>
           <canvas width="500px" id="userChart"></canvas>
         </div>
@@ -121,13 +121,16 @@
             <tr>
               <th>User</th>
               <th>Productivity score</th>
+              <th>Time active</th>
+              <th>Insertions</th>
+              <th>Interactions</th>
             </tr>
           </thead>
           <tbody class="productivity-list">
           </tbody>
         </table>
       </div>
-      <div class="misc-stats cs1 ce12 tab-content" style="display: none;">
+      <div class="misc-stats cs1 ce12 tab-content" style="display: flex;">
         <table class="styled-table board-info">
           <thead>
             <tr>

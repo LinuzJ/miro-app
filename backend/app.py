@@ -4,6 +4,7 @@ from flask_cors import CORS
 from db import db_connect
 import json
 import random
+import itertools
 from datetime import datetime, timedelta
 
 
@@ -167,6 +168,16 @@ def manager_post():
         return f'Method "{request.method}" not supported'
 
 
+@app.route('/users/<board>')
+def all_users(board):
+    if request.method == 'GET':
+        db_actions = db_connect()
+        get_users = db_actions['get_usrs'](board)
+        return jsonify(get_users)
+    else:
+        return f'Method "{request.method}" not supported'
+
+
 @ app.route('/users', methods=['POST', 'GET'])
 def users():
     if request.method == 'POST':
@@ -257,6 +268,12 @@ def activity_stats():
     activity = db_actions['activity']()
     return jsonify(activity)
 
+@app.route('/grouped_events/<board>')
+def grouped_events(board):
+    events = db_connect()['edit_events'](board)
+    usernames = db_connect()['get_username']()
+    return jsonify({usernames.get(k, 'No username'):{ev:count for u, ev, count
+                                                    in v} for k, v in itertools.groupby(events, lambda x: x[0])})
 
 @app.route('/insight/<board>')
 def insight(board):
@@ -288,16 +305,18 @@ def insight(board):
     time_stats = {k: v['total'].total_seconds() for k, v in users.items()}
     for user, time in time_stats.items():
         if time > 600:
+            time = time / 60
             username = usernames.get(user, 'No username')
-            insights.append(jsonify(f'User {username} has spent {time} seconds on the board ' +
+            insights.append(jsonify(f'User {username} has spent {time} minutes on the board ' +
                                     'today, should he take a break?'))
 
     # ----------- SECOND INSIGHT -----------
     new_insight = db_actions['select_insight'](board, 1)
-    user1, user2, user3 = new_insight[2]
-    object_type = new_insight[1].lower()
-    insights.append(
-        jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!'))
+    if new_insight:
+        user1, user2, user3 = new_insight[2]
+        object_type = new_insight[1].lower()
+        insights.append(
+            jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!'))
     # return jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!')
     if insights:
         return random.choice(insights)
