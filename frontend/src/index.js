@@ -84,6 +84,9 @@ async function handleSelectionUpdatedEvent(event) {
 };
 
 miro.onReady(() => {
+    
+    console.log('Keepo');
+    
     miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
@@ -98,7 +101,7 @@ miro.onReady(() => {
             title: 'analytics toolkit',
             svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
             onClick: () => {
-                console.log("lol");
+                miro.board.openModal('choise.html');
             },
           },
         },
