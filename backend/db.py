@@ -140,6 +140,11 @@ def db_connect():
                 board_to_usertime[b] = {}  # Init dict
                 board_to_usertime[b][u] = (x[0][2], x[1][2])
 
+        def timedif(e, s):
+            return (datetime.strptime(
+                    e, fmt) - datetime.strptime(
+                    s[0][0], fmt)).total_seconds()
+
         fmt = '%Y-%m-%d %H:%M:%S'
         data_final = {}
         for key, value in board_to_usertime.items():
@@ -150,15 +155,11 @@ def db_connect():
                     (key, key_user, value_times[0], value_times[1])
                 )
                 out = quer.fetchall()
-                total_time = (datetime.strptime(
-                    out[0][0], fmt) - datetime.strptime(
-                    out[-1][0], fmt)).total_seconds()
+                total_time = timedif(out[-1][0], out[0][0])
                 starts = out[::1]
                 ends = out[1::1]
-                deltas = [(datetime.strptime(
-                    end[0], fmt) - datetime.strptime(
-                    start[0], fmt)).total_seconds()
-                    for start, end in zip(starts, ends)]
+                deltas = [timedif(end[0], start[0])
+                          for start, end in zip(starts, ends)]
                 deltas_std = statistics.pstdev(deltas)
                 deltas_avg = (sum(deltas) / len(deltas)) / total_time
                 data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
