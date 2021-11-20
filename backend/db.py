@@ -10,10 +10,10 @@ def db_connect():
     if conn is None:
         conn = g._database = sqlite3.connect('miro_data.db')
 
-    def add_event(event_id, event_type, board_id, user, data):
-        cur = conn.execute('insert into events (eventId, eventType, board,' +
-                           'userId, data) values (?, ?, ?, ?, ?);',
-                           (event_id, event_type, board_id, user, data))
+    def add_event(event_type, board_id, user, data):
+        cur = conn.execute('insert into events (eventType, boardId,' +
+                           'userId, data) values (?, ?, ?, ?);',
+                           (event_type, board_id, user, data))
         conn.commit()
 
     def update_users(board, users):
@@ -89,9 +89,38 @@ def db_connect():
                 'select * from events where eventType=(?);', (event_type))
         else:
             cur = conn.execute('select * from events;')
-        rv = cur.fetchall()
-        cur.close()
-        return rv
+        return cur.fetchall()
+
+    def user_events():
+        cur = conn.execute("select eventType, userId, timestamp from events where eventType='USER_JOINED' " +
+                           "or eventType='USER_LEFT' order by " +
+                           "timestamp;")
+        return cur.fetchall()
+
+    def user_activity():
+        cur = conn.execute(
+            "SELECT COUNT(events.userId) FROM (events INNER JOIN users ON events.userId = users.userId) GROUP BY boardId, events.userId")
+
+        return cur.fetchall()
+
+    def add_manager(board, usr):
+        conn.execute(
+            'INSERT INTO managers (board, user) VALUES (?, ?);', (board, usr))
+        conn.commit()
+
+    def get_managers(board=None):
+        if board:
+            curr = conn.execute(
+                'SELECT * FROM managers WHERE board = ?;', (board)
+            )
+        else:
+            curr = conn.execute(
+                'SELECT * FROM managers;'
+            )
+        re = curr.fetchall()
+        curr.close()
+        print(re)
+        return re
 
     def setup_table():
         cur = conn.executescript('''
@@ -104,7 +133,6 @@ create table if not exists users(
 );
 create table if not exists events(
     id integer primary key,
-    eventId text not null,
     eventType text not null,
     board text not null,
     userId text not null,
@@ -112,10 +140,23 @@ create table if not exists events(
     timestamp datetime default (datetime('now','localtime')),
     foreign key (userId) references users(userId)
 );
+CREATE TABLE IF NOT EXISTS managers(
+    ID INTEGER PRIMARY KEY,
+    board TEXT NOT NULL,
+    user TEXT NOT NULL
+);
 ''')
         conn.commit()
-
-    return {'add': add_event, 'get': get_events, 'setup': setup_table, 'update_users': update_users}
+    return {
+        'add': add_event,
+        'get': get_events,
+        'setup': setup_table,
+        'user_events': user_events,
+        'update_users': update_users,
+        'activity': user_activity,
+        'add_manager': add_manager,
+        'get_managers': get_managers
+    }
 
 
 @app.teardown_appcontext
