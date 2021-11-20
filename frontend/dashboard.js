@@ -17,6 +17,7 @@ function openTab(selected) {
   } else {
       document.querySelector('.insight').style = 'display: none;'
   }
+  if (selected === '.user-stats') showUserChart(); 
 }
 
 async function getActivity(boardId) {
