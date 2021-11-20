@@ -56,13 +56,13 @@ def db_connect():
         insert_dict = {}
         for user in user_values_list:
             rv = conn.execute(
-                'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null or users.board <> user.board and user.board =(?);', (
-                    user[0], user[1], user[2], user[3], user[2])
+                'with user(userId, userName, board) as (values (?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null or users.board <> user.board;', (
+                    user[0], user[1], user[2])
             ).fetchall()
 
             if rv:
                 conn.execute(
-                    'insert into users(userId, userName, board) values (?, ?, ?);', (
+                    'insert or replace into users(userId, userName, board) values (?, ?, ?);', (
                         user[0], user[1], board)
                 )
                 conn.commit()
