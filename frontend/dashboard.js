@@ -55,22 +55,33 @@ async function showUserChart() {
   const resp = await fetch('https://hittatilltf.com/events')
   const events = await resp.json()
   labels = []
+  pointColor = []
   join_leave_events = events.filter((event) => ['USER_JOINED', 'USER_LEFT'].includes(event[1]));
-  const data = {
-    datasets: [{
-      label: 'User online activity',
-      data: scan(join_leave_events, (total, n) => {
+  const datapoints = scan(join_leave_events, (total, n) => {
         if (n[1] === 'USER_JOINED') {
+          pointColor.push('#77cc66')
           labels.push(`${n[3]} joined at ${n[5]}`)
-          return { x: n[5], y: total.y + 1 }
+          return { x: n[5], y: total.y + 1, user: n[3] }
         } else {
+          pointColor.push('#b80d0d')
           labels.push(`${n[3]} left at ${n[5]}`)
-          return { x: n[5], y: total.y - 1 }
+          return { x: n[5], y: total.y - 1, user: n[3] }
         }
-      }, { x: join_leave_events[0][5], y: 0 }),
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-    }]
+      }, { x: join_leave_events[0][5], y: 0 });
+  const series = {}
+  datapoints.forEach(event => {
+    if (series[event.user]) {
+      series[event.user].push(event);
+    } else {
+      series[event.user] = [event];
+    }
+  })
+  const data = {
+    datasets: Object.entries(series).map(([user, events]) => ({
+      label: user,
+      data: events,
+      pointBackgroundColor: pointColor,
+    })),
   };
   const config = {
     type: 'scatter',
