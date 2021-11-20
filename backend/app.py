@@ -101,7 +101,7 @@ def add():
         return f'Method "{request.method}" not supported'
 
 
-@app.route('add_manager', methods=['GET', 'POST'])
+@app.route('/add_manager', methods=['GET', 'POST'])
 def manager():
     if request.method == 'POST':
         db_actions = db_connect()
