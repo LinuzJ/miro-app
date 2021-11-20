@@ -56,7 +56,7 @@ def db_connect():
         insert_dict = {}
         for user in user_values_list:
             rv = conn.execute(
-                'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =(?);', (
+                'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null or users.board <> user.board and user.board =(?);', (
                     user[0], user[1], user[2], user[3], user[2])
             ).fetchall()
 
@@ -77,15 +77,15 @@ def db_connect():
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 
-        for user in set_online:
+        for userId in set_online:
             cur = conn.execute(
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
-                    user, board)
+                    userId, board)
             )
-        for user in set_offline:
+        for userId in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
-                    user, board)
+                    userId, board)
             )
 
         conn.commit()
