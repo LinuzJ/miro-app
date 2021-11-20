@@ -235,7 +235,6 @@ def db_connect():
         availible_data = []
         for x in fetched:
             id = json.loads(x[1])
-            print(id)
             availible_data.append(
                 (x[0], id['objectId'], id['objectType'])
             )
