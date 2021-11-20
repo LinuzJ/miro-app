@@ -11,6 +11,11 @@ function openTab(selected) {
       document.querySelector(`[tabindex = "${tabIndices[tab]}"`).classList.remove('tab-active')
     };
   });
+  if (selected === '.misc-stats') {
+      document.querySelector('.insight').style = 'display: grid;'
+  } else {
+      document.querySelector('.insight').style = 'display: none;'
+  }
 }
 
 async function getActivity(boardId) {
@@ -32,7 +37,6 @@ async function getInsights() {
     const p = document.querySelector('.insight-text');
     p.appendChild(document.createTextNode(data));
     const insight = document.querySelector('.insight');
-    insight.style = 'display: grid;';
   } catch {
     console.log('error')
     const insight = document.querySelector('.insight');
@@ -43,8 +47,27 @@ async function getInsights() {
 
 function setInfo() {
   if (board) {
-    const p = document.querySelector('.board-info');
-    p.appendChild(document.createTextNode(`Board: ${board.id}\nCreated at: ${board.createdAt}\nLast modified: ${board.updatedAt}\nOwner: ${board.owner.name}`));
+    try {
+      const p = document.querySelector('.board-info');
+      const board = document.createElement('td');
+      board.appendChild(document.createTextNode(board.id));
+      const created = document.createElement('td');
+      created.appendChild(document.createTextNode(board.createdAt));
+      const modified = document.createElement('td');
+      modified.appendChild(document.createTextNode(board.updatedAt));
+      const owner = document.createElement('td');
+      owner.appendChild(document.createTextNode(board.owner.name));
+      const row = document.createElement('tr')
+      const body = document.createElement('tbody');
+      row.appendChild(board);
+      row.appendChild(created);
+      row.appendChild(modified);
+      row.appendChild(owner);
+      body.appendChild(row);
+      p.appendChild(body);
+    } catch (e) {
+      console.log(e)
+    }
   } else {
     setTimeout(setInfo, 100000);
   }

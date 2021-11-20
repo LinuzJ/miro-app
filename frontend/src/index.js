@@ -1,3 +1,5 @@
+// REQUEST FUNCTIONS //
+
 function postData(endpoint, data) {
     fetch("https://hittatilltf.com/" + endpoint, {
         method: "POST",
@@ -18,6 +20,10 @@ async function getData(endpoint) {
     const json = await response.json();
     return json;
 };
+
+
+
+// EVENT HANDLERS //
 
 async function handleUsersChangedEvent(event) {
     let board = await miro.board.info.get();
@@ -42,34 +48,52 @@ async function handleClickEvent(event) {
 async function handleWidgetsCreatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
-    let data = {
-        type: "WIDGETS_CREATED",
-        board: board.id,
-        user: userId
-    };
-    postData("add_event", data);
+    for (object of event.data) {
+        const data = {
+            type: "WIDGET_CREATED",
+            board: board.id,
+            user: userId,
+            data: {
+                objectId: object.id,
+                objectType: object.type
+            }
+        };
+        postData("add_event", data);
+    }
 };
 
 async function handleWidgetsDeletedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
-    let data = {
-        type: "WIDGETS_DELETED",
-        board: board.id,
-        user: userId
-    };
-    postData("add_event", data);
+    for (object of event.data) {
+        const data = {
+            type: "WIDGET_DELETED",
+            board: board.id,
+            user: userId,
+            data: {
+                objectId: object.id,
+                objectType: object.type
+            }
+        };
+        postData("add_event", data);
+    }
 };
 
 async function handleWidgetsUpdatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
-    let data = {
-        type: "WIDGETS_UPDATED",
-        board: board.id,
-        user: userId
-    };
-    postData("add_event", data);
+    for (object of event.data) {
+        const data = {
+            type: "WIDGET_UPDATED",
+            board: board.id,
+            user: userId,
+            data: {
+                objectId: object.id,
+                objectType: object.type
+            }
+        };
+        postData("add_event", data);
+    }
 };
 
 async function handleCommentCreatedEvent(event) {
@@ -100,6 +124,10 @@ async function handleSelectionUpdatedEvent(event) {
         postData("add_event", data);
     }   
 };
+
+
+
+// INITIALIZE EVERYTHING //
 
 async function initialize() {
 
@@ -156,7 +184,7 @@ async function requestAuthorization() {
 }
 
 miro.onReady(() => {
-    console.log('Snart e de ylonz!!');
+    console.log('Snart e de ylonz!!!');
     requestAuthorization().then(res => {
         initialize();
     });
