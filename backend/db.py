@@ -1,6 +1,11 @@
 import sqlite3
 import json
 from flask import g, Flask
+from datetime import datetime
+import statistics
+
+from flask.helpers import total_seconds
+
 
 app = Flask(__name__)
 
@@ -57,7 +62,7 @@ def db_connect():
             [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         set_offline = ','.join(
             [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
-        
+
         for user in set_online:
             cur = conn.execute(
                 'update users set isOnline = 1 where users.userId =? and users.board=?;', (
@@ -123,13 +128,50 @@ def db_connect():
             "SELECT userId, board, eventType, timestamp FROM events WHERE eventType='USER_JOINED' OR eventType='USER_LEFT';"
         )
         join_events = cur.fetchall()
+        # Set of users
         users = set(map(lambda x: x[0], join_events))
+        # list if user in and out times
         timestamps_per_users = [[(y[0], y[1], y[3])
                                  for y in join_events if y[0] == x] for x in users]
-        user_to_time = {x[0][0]: (x[0][2], x[1][2])
-                        for x in timestamps_per_users}
-        print(user_to_time)
-        return "lol"
+        # COnvert to dict {user -> (in, out)}
+
+        # user_to_time = {x[0][0]: (x[0][2], x[1][2]) for x in timestamps_per_users}
+
+        board_to_usertime = {}
+        for x in timestamps_per_users:
+            b = x[0][1]  # board
+            u = x[0][0]  # user
+            if b in board_to_usertime:
+                board_to_usertime[b][u] = (x[0][2], x[1][2])
+            else:
+                board_to_usertime[b] = {}  # Init dict
+                board_to_usertime[b][u] = (x[0][2], x[1][2])
+
+        def timedif(e, s):
+            fmt = '%Y-%m-%d %H:%M:%S'
+            return (datetime.strptime(
+                    e, fmt) - datetime.strptime(
+                    s, fmt)).total_seconds()
+
+        data_final = {}
+        for key, value in board_to_usertime.items():
+            data_final[key] = {}
+            for key_user, value_times in value.items():
+                quer = conn.execute(
+                    "SELECT timestamp FROM events WHERE board = ? AND userId = ? AND timestamp >= ? AND timestamp <= ?;",
+                    (key, key_user, value_times[0], value_times[1])
+                )
+                out = quer.fetchall()
+                total_time = timedif(out[-1][0], out[0][0])
+                starts = out[::1]
+                ends = out[1::1]
+                deltas = [timedif(end[0], start[0])
+                          for start, end in zip(starts, ends)]
+                deltas_std = statistics.pstdev(deltas)
+                deltas_avg = (sum(deltas) / len(deltas)) / total_time
+                data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
+
+        return data_final
 
     def setup_table():
         cur = conn.executescript('''
@@ -170,7 +212,7 @@ CREATE TABLE IF NOT EXISTS managers(
     }
 
 
-@app.teardown_appcontext
+@ app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:

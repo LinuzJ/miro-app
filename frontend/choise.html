@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <style>
 
-        #background {
-        position: relative;
-        width: 340px;
-        height: 250px;
-        background-color: #ECECF0;
-        border-radius: 20px;
+   <link rel="stylesheet" href="https://unpkg.com/mirotone/dist/styles.css">
+    <script>
+        function dashboard() {
+        console.log("Fittit siisti")
         }
+    </script>
 
+    <style>
         #dashboard {
             position: absolute;
-            left: 20px;
-            top: 18px;
+            left: 2%;
+            top: 2%;
+            bottom: 2%;
+            width: 47%;
+            height: 96%;
+            border-radius: 20px;
+
+            font-style: normal;
+            font-weight: 500;
+            font-size: 40px;
+            line-height: 47px;
+            text-align: center;
+            color: #ECECF0;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         }
 
-        #managePermissions {
+        #manageUsers {
             position: absolute;
-            right: 20px;
-            top: 18px;
+            left: 51%;
+            top: 2%;
+            bottom: 2%;
+            width: 47%;
+            height: 96%;
+            border-radius: 20px;
+            background-color: #ECECF0;
+            border-color: #ECECF0;
+
+            font-style: normal;
+            font-weight: 500;
+            font-size: 40px;
+            line-height: 47px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            word-break: break-all; 
         }
-
-   </style>
-
-   <script>
-
-       function dashboard() {
-           console.log("Fittit siisti")
-       }
-
-       function managePermissions() {
-        console.log("Fittit siisti")
-       }
-   </script>
+    </style>
 
 </head>
 <body>
 
-    <div id = "background">
-        <div id = "dashboard", onclick="dashboard()">
-           <img src="Group 1.png" width="140" height="214">
-        </div>
-        <div id = "managePermissions", onclick="managePermissions()>
-            <img src="Group 2.png" width="140" height="214">
-        </div>
-    </div>
-    
-
-
+    <button class="button button-primary", id = "dashboard", onclick="dashboard()">Dashboard</button>
+    <button class="button button-primary", id = "manageUsers", onclick="dashboard()">Manage permissions</button>
+   
 </body>
 
 </html>

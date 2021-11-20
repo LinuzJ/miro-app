@@ -83,11 +83,8 @@ async function handleSelectionUpdatedEvent(event) {
     postData("add_event", data);
 };
 
-miro.onReady(() => {
-    
-    console.log('Keepo');
-    
-    miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
+async function initialize() {
+    // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
     miro.addListener("WIDGETS_DELETED", handleWidgetsDeletedEvent);
@@ -97,13 +94,39 @@ miro.onReady(() => {
 
     miro.initialize({
         extensionPoints: {
-          bottomBar: {
-            title: 'analytics toolkit',
-            svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
-            onClick: () => {
-                miro.board.openModal('frontend/choise.html');
-            },
-          },
+          bottomBar: 
+            async () => {
+                const userId = await miro.currentUser.getId();
+                const board = await miro.board.info.get();
+                if (userId === board.owner.id) {
+                    return {
+                        title: 'analytics toolkit',
+                        svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
+                        onClick: () => {
+                            miro.board.openModal('frontend/choise.html');
+                        }
+                    };
+                }
+            }
         },
-      })
+      });
+};
+
+async function requestAuthorization() {
+    let isAuthorized = await miro.isAuthorized()
+    while (!isAuthorized) {
+        try {
+            await  miro.requestAuthorization();
+        } catch (e) {
+            await new Promise(r => setTimeout(r, 200));
+        }
+        isAuthorized = await miro.isAuthorized()
+    }
+}
+
+miro.onReady(() => {
+    console.log('Snart e de ylonz!!');
+    requestAuthorization().then(res => {
+        initialize();
+    });
 });
