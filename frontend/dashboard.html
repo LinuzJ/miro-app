@@ -5,10 +5,7 @@
    <style>
 
         #background {
-        position: relative;
-        width: 340px;
-        background-color: #ECECF0;
-        border-radius: 20px;
+        padding: 20px;
         }
         #menu {
         display: flex;
@@ -31,19 +28,18 @@
 <body>
   <div id = "background">
     <div class="grid">
-      <div class="cs1 ce10">
-        <input class="input input-small" type="text" placeholder="enter something"/>
+      <div class="cs2 ce8">
+        <h1>Dashboard</h1>
       </div>
-      <div class="cs11 ce12">
+      <div class="cs10 ce10">
         <button class="button-icon button-icon-small icon-back-1" type="button" onclick="location.assign('choise.html')" />
       </div>
-      </hr>
-      <div class="cs1 ce12">
+      <div class="cs2 ce10">
         <div class="tabs">
           <div class="tabs-header-list">
             <div tabindex="0" class="tab tab-active">
               <div class="tab-text tab-badge" onclick="openTab('.user-stats')">users stats</div>
-           </div>
+            </div>
             <div tabindex="1" class="tab">
               <div class="tab-text tab-badge" onclick="openTab('.productivity')">productivity</div>
             </div>
@@ -52,6 +48,8 @@
             </div>
           </div>
         </div>
+      </div>
+      <hr class="cs2 ce10" />
       <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
         <h3>Lots of user stats</h3>
       </div>
@@ -61,7 +59,6 @@
       </div>
       <div class="misc-stats cs1 ce12 tab-content" style="display: none;">
         <h3>Some other stats</h3>
-      </div>
       </div>
     </div>
 </body>
