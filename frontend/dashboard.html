@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/mirotone/dist/styles.css"/>
+   <style>
+
+        #background {
+        position: relative;
+        width: 340px;
+        background-color: #ECECF0;
+        border-radius: 20px;
+        }
+        #menu {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px;
+        }
+        .tab-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+   </style>
+
+   <script>
+   </script>
+    <script src="dashboard.js"></script>
+    <script src="https://miro.com/app/static/sdk.1.1.js"></script>
+
+</head>
+<body>
+  <div id = "background">
+    <div class="grid">
+      <div class="cs1 ce10">
+        <input class="input input-small" type="text" placeholder="enter something"/>
+      </div>
+      <div class="cs11 ce12">
+        <button class="button-icon button-icon-small icon-back-1" type="button" onclick="location.assign('choise.html')" />
+      </div>
+      </hr>
+      <div class="cs1 ce12">
+        <div class="tabs">
+          <div class="tabs-header-list">
+            <div tabindex="0" class="tab tab-active">
+              <div class="tab-text tab-badge" onclick="openTab('.user-stats')">users stats</div>
+           </div>
+            <div tabindex="1" class="tab">
+              <div class="tab-text tab-badge" onclick="openTab('.productivity')">productivity</div>
+            </div>
+            <div tabindex="2" class="tab">
+              <div class="tab-text tab-badge" onclick="openTab('.misc-stats')">misc</div>
+            </div>
+          </div>
+        </div>
+      <div class="user-stats cs1 ce12 tab-content" style="display: flex;">
+        <h3>Lots of user stats</h3>
+      </div>
+      <div class="productivity cs1 ce12 tab-content" style="display: none;">
+        <h3>Productivity stats</h3>
+        <ul class="productivity-list"></ul>
+      </div>
+      <div class="misc-stats cs1 ce12 tab-content" style="display: none;">
+        <h3>Some other stats</h3>
+      </div>
+      </div>
+    </div>
+</body>
+
+</html>
