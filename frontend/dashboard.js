@@ -11,6 +11,11 @@ function openTab(selected) {
       document.querySelector(`[tabindex = "${tabIndices[tab]}"`).classList.remove('tab-active')
     };
   });
+  if (selected === '.misc-stats') {
+      document.querySelector('.insight').style = 'display: grid;'
+  } else {
+      document.querySelector('.insight').style = 'display: none;'
+  }
 }
 
 async function getActivity(boardId) {
