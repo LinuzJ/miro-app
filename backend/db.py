@@ -56,6 +56,8 @@ def db_connect():
         #     [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         # set_offline = ','.join(
         #     [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
+
+        print(rv)
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 

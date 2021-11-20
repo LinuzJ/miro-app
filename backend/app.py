@@ -54,7 +54,7 @@ def update():
             logging.info(request.data)
             board = data_in['board']
             users = data_in['users']
-            if board and users:
+            if board:
                 # Get data on who logged in/out. In format (user, isLogin)
                 changed_users = update_users(board, users)
                 if changed_users[2]:
