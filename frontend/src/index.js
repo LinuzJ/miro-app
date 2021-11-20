@@ -108,8 +108,11 @@ function initialize() {
 async function requestAuthorization() {
     let isAuthorized = await miro.isAuthorized()
     while (!isAuthorized) {
-        await miro.requestAuthorization()
-        await new Promise(r => setTimeout(r, 500));
+        try {
+            await  miro.requestAuthorization();
+        } catch (e) {
+            await new Promise(r => setTimeout(r, 500));
+        }
         isAuthorized = await miro.isAuthorized()
     }
 }
