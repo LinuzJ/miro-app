@@ -16,11 +16,10 @@ def db_connect():
         conn = g._database = sqlite3.connect('miro_data.db')
 
     def add_event(event_type, board_id, user, data):
-        # cur = conn.execute('insert into events (eventType, board,' +
-        #                    'userId, data) values (?, ?, ?, ?);',
-        #                    (event_type, board_id, user, data))
-        # conn.commit()
-        print('add event')
+        cur = conn.execute('insert into events (eventType, board,' +
+                           'userId, data) values (?, ?, ?, ?);',
+                           (event_type, board_id, user, data))
+        conn.commit()
 
     # Returns a tuple (userId, wentOnline): (text, boolean)
     def update_users(board, users):
@@ -29,11 +28,12 @@ def db_connect():
         user_values_list = [(x['id'], x['name'], board, 1) for x in users]
 
 
-        # select from online users where user not in DB
         # cur = conn.executemany(
         #     'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select * from user left join users on user.userId = users.userId where users.userId is null and user.board = users.board;', user_values_list
         # )
 
+
+        # select from online users where user not in DB
         # TODO refactor this shit:
         for user in user_values_list:
             print(user)
@@ -42,6 +42,7 @@ def db_connect():
                 'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =?;', (
                     user[0], user[1], user[2], user[3], user[2])
             ).fetchall()
+            # Should only update one user, so return this user if we have this case
             if rv:
                 conn.execute(
                     'insert into users(userId, userName, board) values (?, ?, ?);', (user[0], user[1], board)
@@ -65,6 +66,8 @@ def db_connect():
                 'update users set isOnline = 1 where users.userId =? and users.board=?;', (
                     user, board)
             )
+
+            # should be only one user updated, so return this user
             conn.commit()
             return (user[0], True)
         for user in set_offline:
