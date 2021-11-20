@@ -4,6 +4,8 @@ from flask import g, Flask
 from datetime import datetime
 import statistics
 
+from flask.helpers import total_seconds
+
 
 app = Flask(__name__)
 
@@ -42,7 +44,7 @@ def db_connect():
         cur = conn.executemany(
             'insert or replace into users(userId, userName, board, isOnline) values (?, ?, ?, ?);', user_values_list
         )
-        
+
         cur = conn.execute(
             'select * from users where users.board=?;', (board)
         )
@@ -53,7 +55,7 @@ def db_connect():
             [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         set_offline = ','.join(
             [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
-        
+
         for user in set_online:
             cur = conn.execute(
                 'update users set isOnline = 1 where users.userId =? and users.board=?;', (
@@ -148,6 +150,9 @@ def db_connect():
                     (key, key_user, value_times[0], value_times[1])
                 )
                 out = quer.fetchall()
+                total_time = (datetime.strptime(
+                    out[0], fmt) - datetime.strptime(
+                    out[-1], fmt)).total_seconds()
                 starts = out[::1]
                 ends = out[1::1]
                 deltas = [(datetime.strptime(
@@ -155,8 +160,8 @@ def db_connect():
                     start[0], fmt)).total_seconds()
                     for start, end in zip(starts, ends)]
                 deltas_std = statistics.pstdev(deltas)
-                deltas_avg = sum(deltas) / len(deltas)
-                data_final[key][key_user] = deltas_avg * deltas_std
+                deltas_avg = (sum(deltas) / len(deltas)) / total_time
+                data_final[key][key_user] = 1 / (deltas_avg * deltas_std)
 
         return data_final
 
