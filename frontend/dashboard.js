@@ -48,7 +48,22 @@ async function getInsights() {
 function setInfo() {
   if (board) {
     const p = document.querySelector('.board-info');
-    p.appendChild(document.createTextNode(`Board: ${board.id}\nCreated at: ${board.createdAt}\nLast modified: ${board.updatedAt}\nOwner: ${board.owner.name}`));
+    const board = document.createElement('td');
+    board.appendChild(document.createTextNode(board.id));
+    const created = document.createElement('td');
+    created.appendChild(document.createTextNode(board.createdAt));
+    const modified = document.createElement('td');
+    modified.appendChild(document.createTextNode(board.updatedAt));
+    const owner = document.createElement('td');
+    owner.appendChild(document.createTextNode(board.owner.name));
+    const row = document.createElement('tr')
+    const body = document.createElement('tbody');
+    row.appendChild(board);
+    row.appendChild(created);
+    row.appendChild(modified);
+    row.appendChild(owner);
+    body.appendChild(row);
+    p.appendChild(body);
   } else {
     setTimeout(setInfo, 100000);
   }
@@ -116,7 +131,7 @@ async function showUserChart() {
   );
 }
 
-miro.onReady(async () => {
+/*miro.onReady(async () => {
     console.log('Snart e de ylonz!!');
     const boardInfo = await miro.board.info.get();
     board = boardInfo;
@@ -124,4 +139,4 @@ miro.onReady(async () => {
     setInfo();
     getActivity(board.id);
     showUserChart();
-});
+});*/
