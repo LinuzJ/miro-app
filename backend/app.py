@@ -68,9 +68,10 @@ def update():
                 #     return 'Redundant data probably'
                 print(changed_users)
 
-                for user in changed_users:
-                    isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
-                    add_event(isLogin, board, user, None)
+                for userId in changed_users.keys():
+                    # isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
+                    isLogin = changed_users[userId]
+                    add_event(isLogin, board, userId, None)
             else:
                 return 'Wrong data.'
             return "OK"
@@ -294,10 +295,12 @@ def insight(board):
 
     # ----------- SECOND INSIGHT -----------
     new_insight = db_actions['select_insight'](board, 1)
-    user1, user2, user3 = new_insight[2]
-    object_type = new_insight[1].lower()
-    insights.append(
-        jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!'))
+    if new_insight:
+        user1, user2, user3 = new_insight[2]
+        object_type = new_insight[1].lower()
+        insights.append(
+            jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!'))
+    # return jsonify(f'Looks like {user1}, {user2} and {user3} are all working on the same {object_type}. Remember to split the work effectveliy!')
     if insights:
         return random.choice(insights)
     else:
