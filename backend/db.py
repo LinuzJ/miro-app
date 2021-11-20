@@ -221,19 +221,24 @@ def db_connect():
     def selection_insight(board, days_to_subtract):
         d = datetime.today() - timedelta(days=days_to_subtract)
         curr = conn.execute(
-            'SELECT userId, data FROM events WHERE board = (?) AND data IS NOT NULL AND timestamp > (?);',
+            'SELECT userId, data FROM events WHERE board = (?) AND data <> "null" AND data IS NOT NULL AND timestamp > (?);',
             (board, d)
         )
         fetched = curr.fetchall()
         # Tranform into tuple with (userId, objectId, objectType)
-        availible_data = list(
-            map((lambda x: (x[0], x[1]['objectId'], x[1]['objectType']), fetched)))
+        availible_data = []
+        for x in fetched:
+            id = json.loads(x[1])
+            availible_data.append(
+                (x[0], id['objectId'], id['objectType'])
+            )
 
         # Groupby objectId and collect length and tems of each group
         groups = {}
         for key, group in groupby(availible_data, lambda x: x[1]):
-            if len(group) >= 3:
-                groups[key] = group
+            y = list(group)
+            if len(y) >= 3:
+                groups[key] = y
 
         return groups
 

@@ -85,7 +85,9 @@ async function showUserChart() {
   const events = await resp.json()
   labels = []
   pointColor = []
-  join_leave_events = events.filter((event) => ['USER_JOINED', 'USER_LEFT'].includes(event[1]));
+  join_leave_events = events
+    .filter((event) => ['USER_JOINED', 'USER_LEFT'].includes(event[1]))
+    .filter(event => event[2] === board.id);
   const datapoints = scan(join_leave_events, (total, n) => {
         if (n[1] === 'USER_JOINED') {
           pointColor.push('#77cc66')
