@@ -37,12 +37,12 @@ def events(event_type):
     else:
         return 'No events found'
 
+
 @app.route('/username')
 def username():
     if request.method == 'GET':
         db_actions = db_connect()
         return jsonify(db_actions['get_username']())
-        
 
 
 @app.route('/update_users', methods=['GET', 'POST'])
@@ -289,14 +289,17 @@ def insight(board):
                                     'today, should he take a break?'))
 
     # ----------- SECOND INSIGHT -----------
-    new_insight = db_actions['select_insight'](board, 1)
-    print(new_insight)
+    try:
+        new_insight = db_actions['select_insight'](board, 1)
+        print(new_insight)
 
-    # if insights:
-    #     return random.choice(insights)
-    # else:
-    #     return jsonify(None)
-    return jsonify(new_insight)
+        # if insights:
+        #     return random.choice(insights)
+        # else:
+        #     return jsonify(None)
+        return jsonify(new_insight)
+    except Exception as e:
+        return f'Error is: "{e}"'
 
 
 if __name__ == '__main__':
