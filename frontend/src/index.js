@@ -8,6 +8,15 @@ function postData(endpoint, data) {
     });
 };
 
+async function getData(endpoint) {
+    const response = await fetch("https://hittatilltf.com/" + endpoint, {
+        method: "GET",
+        headers: {},
+    });
+    const json = await response.json();
+    return json;
+};
+
 async function handleUsersChangedEvent(event) {
     let board = await miro.board.info.get();
     let data = {
@@ -98,7 +107,8 @@ async function initialize() {
             async () => {
                 const userId = await miro.currentUser.getId();
                 const board = await miro.board.info.get();
-                if (userId === board.owner.id) {
+                const managers = await getData("managers/" + board.id)
+                if (userId === board.owner.id || managers.map(manager => manager.id).includes(userId)) {
                     return {
                         title: 'analytics toolkit',
                         svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
