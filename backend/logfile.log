@@ -1,0 +1,11 @@
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/db.py', reloading
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 18:33:16] "GET /stats/productivity/firstboard HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/linus/Documents/Code/HackJunction/backend/db.py', reloading
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 133-057-468
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 18:33:29] "GET /stats/productivity/firstboard HTTP/1.1" 200 -
+INFO:werkzeug:10.100.37.150 - - [20/Nov/2021 18:35:06] "GET /stats/productivity/firstboard HTTP/1.1" 200 -
