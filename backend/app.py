@@ -68,9 +68,10 @@ def update():
                 #     return 'Redundant data probably'
                 print(changed_users)
 
-                for user in changed_users:
-                    isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
-                    add_event(isLogin, board, user, None)
+                for userId in changed_users.keys():
+                    # isLogin = "USER_JOINED" if changed_users[user] else "USER_LEFT"
+                    isLogin = changed_users[userId]
+                    add_event(isLogin, board, userId, None)
             else:
                 return 'Wrong data.'
             return "OK"

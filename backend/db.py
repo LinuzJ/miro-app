@@ -46,7 +46,7 @@ def db_connect():
                     old_user,)
             ).fetchall()[0][0]
 
-            # Insert USER LEFT event into DB
+            # Insert USER_LEFT event into DB
             conn.execute(
                 'insert into events(eventType, board, userId, data, timestamp) values (?, ?, ?, ?, ?);',
                 ('USER_LEFT', board, old_user, None, latest_timestamp)
@@ -66,8 +66,7 @@ def db_connect():
                         user[0], user[1], board)
                 )
                 conn.commit()
-                insert_dict[user[0]] = True
-                # return (user[0], True, True)
+                insert_dict[user[0]] = 'USER_INSERTED'
 
         cur = conn.execute(
             'select * from users where users.board=(?);', (board,)
@@ -77,11 +76,13 @@ def db_connect():
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 
+        # USER JOINED
         for userId in set_online:
             cur = conn.execute(
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
                     userId, board)
             )
+        # USER LEFT 
         for userId in set_offline:
             cur = conn.execute(
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
@@ -89,8 +90,8 @@ def db_connect():
             )
 
         conn.commit()
-        to_online_dict = {user: True for user in set_online}
-        to_offline_dict = {user: False for user in set_offline}
+        to_online_dict = {user: 'USER_JOINED' for user in set_online}
+        to_offline_dict = {user: 'USER_LEFT' for user in set_offline}
 
         return ({**insert_dict, **to_online_dict, **to_offline_dict})
 
