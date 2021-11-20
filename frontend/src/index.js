@@ -105,11 +105,15 @@ function initialize() {
       });
 };
 
-miro.onReady(() => {
-    console.log('Snart e de ylonz');
+async function requestAuthorization() {
     let isAuthorized = await miro.isAuthorized()
     while (!isAuthorized) {
         await miro.requestAuthorization()
     }
     initialize();
+}
+
+miro.onReady(() => {
+    console.log('Snart e de ylonz');
+    await requestAuthorization();
 });
