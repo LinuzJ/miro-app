@@ -84,16 +84,23 @@ async function handleCommentCreatedEvent(event) {
 async function handleSelectionUpdatedEvent(event) {
     let board = await miro.board.info.get();
     let userId = await miro.currentUser.getId();
-    let data = {
-        eventType: "SELECTION_UPDATED",
-        board: board.id,
-        user: userId
-    };
-    postData("add_event", data);
+
+    for (object of event.data) {
+        const data = {
+            type: "SELECTION_UPDATED",
+            board: board.id,
+            user: userId,
+            data: {
+                objectId: object.id,
+                objectType: object.type
+            }
+        };
+        postData("add_event", data);
+    }   
 };
 
 async function initialize() {
-    // miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
+    miro.addListener("ONLINE_USERS_CHANGED", handleUsersChangedEvent);
     miro.addListener("CANVAS_CLICKED", handleClickEvent);
     miro.addListener("WIDGETS_CREATED", handleWidgetsCreatedEvent);
     miro.addListener("WIDGETS_DELETED", handleWidgetsDeletedEvent);
@@ -107,7 +114,7 @@ async function initialize() {
             async () => {
                 const userId = await miro.currentUser.getId();
                 const board = await miro.board.info.get();
-                const managers = await getData("managers/" + board.id)
+                const managers = await getData("managers/" + board.id);
                 if (userId === board.owner.id || managers.map(manager => manager.id).includes(userId)) {
                     return {
                         title: 'analytics toolkit',
