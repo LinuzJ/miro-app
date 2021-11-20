@@ -14,14 +14,16 @@ def db_connect():
         conn = g._database = sqlite3.connect('miro_data.db')
 
     def add_event(event_type, board_id, user, data):
-        cur = conn.execute('insert into events (eventType, board,' +
-                           'userId, data) values (?, ?, ?, ?);',
-                           (event_type, board_id, user, data))
-        conn.commit()
+        # cur = conn.execute('insert into events (eventType, board,' +
+        #                    'userId, data) values (?, ?, ?, ?);',
+        #                    (event_type, board_id, user, data))
+        # conn.commit()
+        print('add event')
 
     def update_users(board, users):
-
+        # TODO get who this inserts, return real values
         ids_list = [x['id'] for x in users]
+        print(ids_list)
         # FORMAT: 1,2,3
         user_ids = ','.join(map(lambda x: f"'{x['id']}'", users))
 
@@ -29,61 +31,41 @@ def db_connect():
         # user_values = '(' + '),('.join(map(lambda dict: ','.join(dict.values()))) + ')'
 
         # FORMAT: (id, name, board, 1)
-        user_values = map(
-            lambda x: '(' + x['id'] + ",'" + x['name'] + "'," + str(board) + ',' + '1)', users)
-        user_values = ','.join(user_values)
 
         # (id,name,board,1),(id,name,board,1)...
         # print(user_values)
         # cur = conn.execute(
         #     f'insert into users(userId, userName, board, isOnline) values {user_values};'
         # )
-
-        # Get users that come online
-        # sql = 'select * from users where users.userId in (%s) and users.board = %s and not users.isOnline;'
-        # cur = conn.execute(
-        #     f'select * from users where users.userId in ({user_values}) and users.board=? and not users.isOnline;', [board]
-        # )
+        user_values_list = [(x['id'], x['name'], board, 1) for x in users]
+        print(user_values_list)
+        cur = conn.executemany(
+            'insert or replace into users(userId, userName, board, isOnline) values (?, ?, ?, ?);', user_values_list
+        )
+        
         cur = conn.execute(
             'select * from users where users.board=?;', (board)
         )
 
         rv = cur.fetchall()
-
-        set_online = ','.join([x[0]
-                              for x in rv if x[0] in ids_list and x[3] == 0])
+        # print(rv)
+        set_online = ','.join(
+            [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         set_offline = ','.join(
-            [x[0] for x in rv if x[0] not in ids_list and x[3] == 0])
-        print(set_online + ' online')
-        print(set_offline + ' offline')
-        # Update their values
-        # set_online = ','.join(map(lambda x : f"'{x[0]}'", returnvalue)) # users to set to online
-        # print(set_online)
-        cur = conn.execute(
-            f'update users set isOnline = 1 where users.userId in ({set_online}) and users.board=?', (
-                board)
-        )
-        cur = conn.execute(
-            f'update users set isOnline = 0 where users.userId not in ({set_online}) and users.board=?', (
-                board)
-        )
+            [x[0] for x in rv if x[0] not in ids_list and x[3] == 1])
+        
+        for user in set_online:
+            cur = conn.execute(
+                'update users set isOnline = 1 where users.userId =? and users.board=?;', (
+                    user, board)
+            )
+        for user in set_offline:
+            cur = conn.execute(
+                'update users set isOnline = 0 where users.userId =? and users.board=?;', (
+                    user, board)
+            )
         conn.commit()
 
-        # # Get users that go offline
-        # cur = conn.execute(
-        #     'select * from users where users.userId not in (?) and users.board =(?) and users.isOnline;', (user_ids, board)
-        # )
-        # # cur.execute(sql, (user_ids, board))
-        # set_offline = ','.join(map(lambda x: f"'{x[0]}'", cur.fetchall())) # users to set to offline
-        # print(set_offline)
-        # # Update their values
-        # # sql = 'update users set isOnline = 0 where users.userId in (%s) and users.board = %s;'
-        # cur = conn.execute(
-        #     'update users set isOnline = 0 where users.userId in (?) and users.board =(?);', (set_offline, board)
-        # )
-        # # cur.execute(sql, (set_offline, board))
-        # conn.commit()
-        # cur.close()
         return ('ok', False)
 
     def get_events(event_type=None):
