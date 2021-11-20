@@ -28,7 +28,6 @@ def db_connect():
         ids_list = [x['id'] for x in users]
         user_values_list = [(x['id'], x['name'], board, 1) for x in users]
 
-
         # select from online users where user not in DB
         # cur = conn.executemany(
         #     'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select * from user left join users on user.userId = users.userId where users.userId is null and user.board = users.board;', user_values_list
@@ -44,7 +43,8 @@ def db_connect():
             ).fetchall()
             if rv:
                 conn.execute(
-                    'insert into users(userId, userName, board) values (?, ?, ?);', (user[0], user[1], board)
+                    'insert into users(userId, userName, board) values (?, ?, ?);', (
+                        user[0], user[1], board)
                 )
                 conn.commit()
                 return (user[0], True)
@@ -121,7 +121,7 @@ def db_connect():
             )
         re = curr.fetchall()
         curr.close()
-        return [{"userId": x[0], "userName": x[1]} for x in re]
+        return [{"id": x[0], "name": x[1]} for x in re]
 
     def stats_productivity():
         cur = conn.execute(
