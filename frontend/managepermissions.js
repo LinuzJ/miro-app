@@ -53,6 +53,9 @@ async function addManager(user) {
     body: JSON.stringify(data)
   });
 
+  const p = document.querySelector('.users');
+  p.innerHTML = '';
+
   await loadUsers();
 
 }
@@ -71,6 +74,9 @@ async function removeManager(user) {
     headers: {},
     body: JSON.stringify(data)
   });
+
+  const p = document.querySelector('.users');
+  p.innerHTML = '';
 
   await loadUsers();
 
