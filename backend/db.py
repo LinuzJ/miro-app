@@ -32,10 +32,8 @@ def db_connect():
         # select from online users where user not in DB
         # TODO refactor this shit:
         for user in user_values_list:
-            print(user)
             rv = conn.execute(
-                # 'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select * from user left join users on user.userId = users.userId where users.userId is null and user.board = users.board;', (user[0], user[1], user[2], user[3])
-                'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =?;', (
+                'with user(userId, userName, board, isOnline) as (values (?, ?, ?, ?)) select user.userId, user.userName from user left join users on user.userId = users.userId where users.userId is null and user.board =(?);', (
                     user[0], user[1], user[2], user[3], user[2])
             ).fetchall()
             # Should only update one user, so return this user if we have this case
@@ -48,11 +46,12 @@ def db_connect():
                 return (user[0], True, True)
 
         cur = conn.execute(
-            'select * from users where users.board=?;', (board)
+            'select * from users where users.board=(?);', (board,)
         )
         rv = cur.fetchall()
 
         # OFFLINE users in rv should be online
+        # list of IDs
         set_online = ','.join(
             [x[0] for x in rv if x[0] in ids_list and x[3] == 0])
         set_offline = ','.join(
@@ -60,20 +59,21 @@ def db_connect():
 
         for user in set_online:
             cur = conn.execute(
-                'update users set isOnline = 1 where users.userId =? and users.board=?;', (
+                'update users set isOnline = 1 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
 
             # should be only one user updated, so return this user
             conn.commit()
-            return (user[0], True, True)
+            return (user, True, True)
         for user in set_offline:
             cur = conn.execute(
-                'update users set isOnline = 0 where users.userId =? and users.board=?;', (
+                'update users set isOnline = 0 where users.userId =(?) and users.board=(?);', (
                     user, board)
             )
             conn.commit()
-            return (user[0], False, True)
+            return (user, False, True)
+            
         return ('-1', False, False)
 
     def get_events(event_type=None):

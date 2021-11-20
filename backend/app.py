@@ -1,13 +1,17 @@
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import db_connect
 import json
+import random
 from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
 CORS(app)
+
+logging.basicConfig(filename='logfile.log')
 
 
 @app.route('/')
@@ -47,6 +51,7 @@ def update():
             add_event = db_actions['add']
             # Get data
             data_in = request.get_json()
+            logging.info(request.data)
             board = data_in['board']
             users = data_in['users']
             if board and users:
@@ -239,6 +244,39 @@ def activity_stats():
     # Get data
     activity = db_actions['activity']()
     return jsonify(activity)
+
+@app.route('/insight')
+def insight():
+    insights = []
+    time_stats = {}
+    db_actions = db_connect()
+    events = db_actions['user_events']()
+    users = {}
+    for event_type, user_id, timestamp in events:
+        if user_id not in users:
+            if event_type == 'USER_JOINED':
+                users[user_id] = {'joined': timestamp, 'total': timedelta(0)}
+        elif 'joined' in users[user_id] and event_type == 'USER_LEFT':
+            fmt = '%Y-%m-%d %H:%M:%S'
+            interval = datetime.strptime(
+                timestamp, fmt) - datetime.strptime(users[user_id]['joined'], fmt)
+            total = users[user_id]['total'] + interval
+            users[user_id] = {'total': total}
+        elif 'joined' not in users[user_id] and event_type == 'USER_JOINED':
+            users[user_id] = {'joined': timestamp,
+                              'total': users[user_id]['total']}
+            print('add joined')
+        else:
+            print('Incorrect joined/left event')
+    time_stats = {k: v['total'].total_seconds() for k, v in users.items()}
+    for user, time in time_stats.items():
+        if time > 600:
+            insights.append(jsonify(f'User {user} has spent {time} seconds on the board ' +
+                           'today, should he take a break?'))
+    if insights:
+        return random.choice(insights)
+    else:
+        return jsonify(None)
 
 
 if __name__ == '__main__':
