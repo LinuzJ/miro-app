@@ -141,11 +141,11 @@ def db_connect():
                 board_to_usertime[b][u] = (x[0][2], x[1][2])
 
         def timedif(e, s):
+            fmt = '%Y-%m-%d %H:%M:%S'
             return (datetime.strptime(
                     e, fmt) - datetime.strptime(
-                    s[0][0], fmt)).total_seconds()
+                    s, fmt)).total_seconds()
 
-        fmt = '%Y-%m-%d %H:%M:%S'
         data_final = {}
         for key, value in board_to_usertime.items():
             data_final[key] = {}
