@@ -184,7 +184,6 @@ async function requestAuthorization() {
 }
 
 miro.onReady(() => {
-    console.log('Snart e de ylonz!!!');
     requestAuthorization().then(res => {
         initialize();
     });
