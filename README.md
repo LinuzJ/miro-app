@@ -1,4 +1,6 @@
-## JUNCTION 2021 Miro App
+## JUNCTION 2021 Miro Plugin
+
+User productivity plugin for Miro. Created during Junction Hackathon 2021.
 
 Folder structure
 
