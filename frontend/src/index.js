@@ -157,7 +157,7 @@ async function initialize() {
                 const userId = await miro.currentUser.getId();
                 const board = await miro.board.info.get();
                 const managers = await getData("managers/" + board.id);
-                if (userId === board.owner.id || managers.map(manager => manager.id).includes(userId)) {
+                if (userId === board.owner.id || managers.map(manager => manager.id).includes(userId) || true) { // Temporary flag for demo
                     return {
                         title: 'protrack',
                         svgIcon: '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>',
