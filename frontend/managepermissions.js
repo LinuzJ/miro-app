@@ -25,7 +25,7 @@ async function loadUsers() {
           b.setAttribute('onclick', "miro.showNotification('Removing managers is not supported in the demo')")
         } else {
           b.className = 'button button-primary';
-          b.setAttribute('onclick', "miro.showNotification('Removing managers is not supported in the demo')")
+          b.setAttribute('onclick', "miro.showNotification('Adding managers is not supported in the demo')")
         }
 
        
@@ -39,6 +39,5 @@ async function loadUsers() {
 }
 
 miro.onReady(async () => {
-  console.log('Fest2');
   await loadUsers();
 });
