@@ -79,19 +79,19 @@ def db_connect():
 
         # USER JOINED
         for userId in set_online:
-            cur = conn.execute(
+            cur_online = conn.execute(
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?) and users.isOnline = 0;', (
                     userId, board)
             )
-            if cur.rowcount > 0:
+            if cur_online.rowcount > 0:
                 change_dict[userId] = True
         # USER LEFT 
         for userId in set_offline:
-            cur = conn.execute(
+            cur_offline = conn.execute(
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?) and users.isOnline = 1;', (
                     userId, board)
             )
-            if cur.rowcount > 0:
+            if cur_offline.rowcount > 0:
                 change_dict[userId] = False
 
         conn.commit()
@@ -176,14 +176,14 @@ def db_connect():
         return events
 
     def stats_productivity(board):
-        cur_j = conn.execute(
-            "SELECT DISTINCT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.eventType='USER_JOINED' AND events.board = (?);",
-            (board,)
-        )
-        cur_l = conn.execute(
-            "SELECT DISTINCT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.eventType='USER_LEFT' AND events.board = (?);",
-            (board,)
-        )
+        # cur_j = conn.execute(
+        #     "SELECT DISTINCT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.eventType='USER_JOINED' AND events.board = (?);",
+        #     (board,)
+        # )
+        # cur_l = conn.execute(
+        #     "SELECT DISTINCT userName, events.board, eventType, timestamp FROM (events INNER JOIN users ON events.userId = users.userId) WHERE events.eventType='USER_LEFT' AND events.board = (?);",
+        #     (board,)
+        # )
         join_events = conn.execute(
             "select userName, max(timestamp) from (events inner join users on events.userId=users.userId) where events.eventType='USER_JOINED' and events.board=(?) group by users.userId;", (board,)
         ).fetchall()
