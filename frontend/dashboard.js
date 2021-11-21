@@ -29,7 +29,7 @@ async function getActivity(boardId) {
   const eventsResp = await fetch(`https://hittatilltf.com/grouped_events/${boardId}`);
   const eventsData = await eventsResp.json();
   const list = document.querySelector('.productivity-list');
-  Object.entries(productivityData[boardId]).forEach(([user, productivityScore]) => {
+  Object.entries(productivityData).forEach(([user, productivityScore]) => {
     const tr = document.createElement('tr');
     const userName = document.createElement('td');
     const score = document.createElement('td');
