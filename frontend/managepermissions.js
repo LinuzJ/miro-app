@@ -44,7 +44,7 @@ async function addManager(user) {
 
   const data = {
     board: board.id,
-    user: user
+    user: String(user)
   };
 
   await fetch('https://hittatilltf.com/managers', {
@@ -66,7 +66,7 @@ async function removeManager(user) {
 
   const data = {
     board: board.id,
-    user: user
+    user: String(user)
   };
 
   await fetch('https://hittatilltf.com/managers', {
