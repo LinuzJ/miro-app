@@ -76,13 +76,14 @@ def db_connect():
         set_online = [x[0] for x in rv if x[0] in ids_list and x[3] == 0]
         set_offline = [x[0] for x in rv if x[0] not in ids_list and x[3] == 1]
 
-
+        conn.commit()
         # USER JOINED
         for userId in set_online:
             cur_online = conn.execute(
                 'update users set isOnline = 1 where users.userId =(?) and users.board=(?) and users.isOnline = 0;', (
                     userId, board)
             )
+            conn.commit()
             if cur_online.rowcount > 0:
                 change_dict[userId] = True
         # USER LEFT 
@@ -91,6 +92,7 @@ def db_connect():
                 'update users set isOnline = 0 where users.userId =(?) and users.board=(?) and users.isOnline = 1;', (
                     userId, board)
             )
+            conn.commit()
             if cur_offline.rowcount > 0:
                 change_dict[userId] = False
 
