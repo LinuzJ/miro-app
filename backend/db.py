@@ -272,7 +272,11 @@ def db_connect():
                 deltas_std = statistics.pstdev(deltas)
                 deltas_avg = (sum(deltas) / len(deltas)) 
                 print(deltas_avg, deltas_std, key_user)
-                data_final[key_user] = 100000 / (deltas_avg * deltas_std)
+                denom = deltas_avg * deltas_std
+                if denom != 0:
+                    data_final[key_user] = 100000 / denom
+                else:
+                    data_final[key_user] = 0.33 # Nice average productivity score
             else:
                 data_final[key_user] = 0
 
