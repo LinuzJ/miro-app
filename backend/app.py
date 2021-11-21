@@ -307,7 +307,7 @@ def insight(board):
         if time > 600:
             time = time / 60
             username = usernames.get(user, 'No username')
-            insights.append(jsonify(f'User {username} has spent {time} minutes on the board ' +
+            insights.append(jsonify(f'User {username} has spent {time:.0f} minutes on the board ' +
                                     'today, should he take a break?'))
 
     # ----------- SECOND INSIGHT -----------
