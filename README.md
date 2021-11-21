@@ -6,8 +6,21 @@ Folder structure
 .
 ├── README.md                  // This README file
 ├── backend
-│   ├── db.py
-│   └── app.py
+│   ├── Pipfile
+│   ├── Pipfie.lock
+│   ├── db.py                   // Communication with database
+│   └── app.py                  // Flask REST API
 └── frontend
-    ├── idk lol :D
+    ├── src
+    │   └── index.js  
+    ├── Group 1.png
+    ├── Group 2.png
+    ├── choise.html
+    ├── dashboard.html
+    ├── dashboard.js
+    ├── dashboard.png
+    ├── index.html
+    ├── managepermission.html
+    ├── managepermission.js
+    └── managepermission.png
 ```
