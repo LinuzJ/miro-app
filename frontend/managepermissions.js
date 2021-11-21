@@ -22,10 +22,10 @@ async function loadUsers() {
         const b = document.createElement('button');
         if (managers.map(manager => manager.id).includes(user.id)) {
           b.className = 'button button-danger';
-          b.setAttribute('onclick', "removeManager(" + user.id + ")")
+          b.setAttribute('onclick', "miro.showNotification('Removing managers is not supported in the demo')")
         } else {
           b.className = 'button button-primary';
-          b.setAttribute('onclick', "addManager(" + user.id + ")")
+          b.setAttribute('onclick', "miro.showNotification('Removing managers is not supported in the demo')")
         }
 
        
@@ -38,51 +38,7 @@ async function loadUsers() {
     }
 }
 
-async function addManager(user) {
-
-  const board = await miro.board.getInfo();
-
-  const data = {
-    board: board.id,
-    user: String(user)
-  };
-
-  await fetch('https://hittatilltf.com/managers', {
-    method: 'POST',
-    headers: {},
-    body: JSON.stringify(data)
-  });
-
-  const p = document.querySelector('.users');
-  p.innerHTML = '';
-
-  await loadUsers();
-
-}
-
-async function removeManager(user) {
-
-  const board = await miro.board.getInfo();
-
-  const data = {
-    board: board.id,
-    user: String(user)
-  };
-
-  await fetch('https://hittatilltf.com/managers', {
-    method: 'DELETE',
-    headers: {},
-    body: JSON.stringify(data)
-  });
-
-  const p = document.querySelector('.users');
-  p.innerHTML = '';
-
-  await loadUsers();
-
-}
-
 miro.onReady(async () => {
-  console.log('lol');
+  console.log('Fest2');
   await loadUsers();
 });
