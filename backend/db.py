@@ -270,9 +270,10 @@ def db_connect():
                 deltas_std = statistics.pstdev(deltas)
                 deltas_avg = (sum(deltas) / len(deltas)) 
                 print(deltas_avg, deltas_std, key_user)
-                data_final[key_user] = 100000 / (deltas_avg * (deltas_std if
-                                                               deltas_std is
-                                                               not 0 else 1))
+                data_final[key_user] = 100000 / (deltas_avg * deltas_std if
+                                                 deltas_std *
+                                                 deltas_avg is
+                                                 not 0 else 1)))
             else:
                 data_final[key_user] = 0
 
